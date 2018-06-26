@@ -1,0 +1,39 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>  
+    <title>{% block title %}{% trans "Terkom 'Antratsit'" %}{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">  
+    {% block style %}{% endblock style %}
+        {% block script %}{% endblock script %}
+</head>
+    <body style="">
+        
+        <div class="page-container">
+            
+            <div class="page-content page-content-default">
+
+                <div class="block-error">
+                    
+                    <div class="error-num">5dgf00</div>
+                    <div class="error-text">Some errors</div>
+                    
+                    <div class="error-description">Unfortunately we're having trouble loading the page you are looking for. Please wait a moment and try again or use action below.</div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button class="btn btn-info btn-block" onclick="document.location.href = 'index.html';">Back to dashboard</button>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-primary btn-block" onclick="history.back();">Previous page</button>
+                        </div>
+                    </div>
+                    <div class="copy">
+                        © All Rights Reserved Gemini 2014
+                    </div>
+                </div>
+                
+            </div>
+        </div>        
+    </body>
+</html>

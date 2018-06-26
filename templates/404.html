@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block style %}
+    {% include 'style.html' %}  
+{% endblock style %}
+
+{% block script %}
+    {% include 'script.html' %}
+    <script type="text/javascript">
+      function createReport(element){
+        element.href = '/calculations/' + $('#select_date').val() +'/' + $('#select_childrens').val();
+      }
+    </script>
+{% endblock script %}
+
+
+{% block crumb %}
+  <ul id="ul-breadcrumb" class="breadcrumb">
+    <li id="li-1" class="breadcrumb-item"><a href="{{parent_href}}">{{parent_title}}</a></li>
+    <li id="li-2" class="breadcrumb-item active">{{title}}</li>
+  </ul>
+{% endblock crumb %}
+{% block content %}   
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="card_table" class="card">
+                <div class="card-header d-flex align-items-center">
+                  <h2 class="h5 display">{{title}}</h2>
+                </div>
+                <div class="card-block error-div-flex">
+                    <div class="btn btn-danger"><h1>404 <br>Page not found</h1></div>
+                </div>
+              </div>
+        </div> 
+{% endblock content %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block style %}
+    {% include 'style.html' %}
+{% endblock style %}
+
+{% block script %}
+    {% include 'script.html' %}
+{% endblock script %}
+
+
+{% block crumb %}
+  <ul id="ul-breadcrumb" class="breadcrumb">
+    <li id="li-1" class="breadcrumb-item"><a href=""></a></li>
+    <li id="li-2" class="breadcrumb-item active"></li>
+  </ul>
+{% endblock crumb %}
+{% block content %}    
+    <div class="row">
+        <div class="col-lg-12">
+            <table id="table_data" class="table">
+                {% for row_product in report_product_accounting %}
+                <tr>
+                    <td>{{row_product.product.name}}</td>
+                </tr>
+                    {% for invoice in row_product.invoices %}
+                        <tr inv>
+                            <td>{{invoice.created_at|date}}</td>
+                            <td>{{invoice.invoce.number}}</td>
+                            <td>{{invoice.from_of}}</td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </table>
+            {}
+        </div>
+    </div>
+{% endblock content %}

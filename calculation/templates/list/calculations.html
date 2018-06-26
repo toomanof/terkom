@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block style %}
+    {% include 'style.html' %}  
+{% endblock style %}
+
+{% block script %}
+    {% include 'script.html' %}
+    <script type="text/javascript">
+      function createReport(element){
+        element.href = '/calculations/' + $('#select_date').val() +'/' + $('#select_childrens').val();
+      }
+    </script>
+{% endblock script %}
+
+
+{% block crumb %}
+  <ul id="ul-breadcrumb" class="breadcrumb">
+    <li id="li-1" class="breadcrumb-item"><a href="{{parent_href}}">{{parent_title}}</a></li>
+    <li id="li-2" class="breadcrumb-item active">{{title}}</li>
+  </ul>
+{% endblock crumb %}
+{% block content %}   
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="card_table" class="card">
+                <div class="card-header d-flex align-items-center">
+                  <h2 class="h5 display">{{title}}</h2>
+                </div>
+                <div class="card-block">
+                    {% block action_buttons %}
+                    <div class="form-inline" style="margin-bottom:1.25rem">
+                      <input type="date" id="select_date" class="col-lg-2 form-control mr-3" value="{{date_now|date:'Y-m-d'}}">
+                      <input type="number" id="select_childrens" class="col-lg-2 form-control mr-3" value="{{childrens}}">
+                      <a type="button" href="" class="btn-primary form-control mr-3"  onclick="createReport(this)">Создать отчет</a>
+                    </div>
+                    {% endblock action_buttons %}
+                    <div class="scroll" style="overflow:auto">
+                        {% include 'includes/report_calculation.html' %}
+                    </div>
+                </div>
+              </div>
+        </div> 
+{% endblock content %}

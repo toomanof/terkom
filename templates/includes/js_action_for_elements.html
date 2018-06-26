@@ -1,0 +1,86 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('input[name$="created_at"]').val($('#created_at').val())
+    });
+    
+
+    let apend_row = function (event){
+
+        let created_at = $('#created_at').val();
+        let tbody = $('table>tbody');
+        let trs = tbody.find('tr');
+        count_rows =trs.length;
+        let str_tr = '<tr><input type="hidden" name="{{dom_element}}-0-id" value="" id="id_{{dom_element}}-0-id">'
+                        .replace(/{{dom_element}}-\d+-/g,'{{dom_element}}-'+count_rows+'-')
+                        .replace(/%created_at/g,created_at)
+        let last_td  = tbody.find('tr:last-child td:last-child');
+//        $(last_td).html('<a id="del_row" type="button" class="btn btn-success append-item"><i class="fa fa-minus" aria-hidden="true"></i></a>');
+
+        let tds =tbody.find('tr:last-child td');
+        $.each( tds, function(index, item){
+            curent_html = $(item).html()
+            curent_html = curent_html.replace(/{{dom_element}}-\d+-/g,'{{dom_element}}-'+count_rows+'-')
+                                     .replace(/selected/g,'')
+                                     .replace(/(input type="text".*value=")([\d\/]+)"/g,'$1"');
+            str_tr += '<td>' + curent_html + '</td>';
+        });
+        str_tr +='</tr>'; 
+        tbody.append(str_tr);
+        $('#id_{{dom_element}}-TOTAL_FORMS').val(count_rows +1);
+
+        tbody.find('tr:last-child td:last-child').html('');
+        
+        trs = tbody.find('tr');
+        $.each(trs, function(index, item){
+            td = $(item).find('td');
+            $(td[0]).html(index+1);
+        });
+
+        $("#table-scroll").scrollTop($("#table-scroll").prop('scrollHeight'));
+        $('table>tbody>tr:last-child td:nth-child({{focus_column}}) select').first().focus();
+    };
+
+    $('table').on('click','#del_row', function(){
+
+        $(this).parents('tr').remove();
+        $('#id_form-TOTAL_FORMS').val($('#id_form-TOTAL_FORMS').val()-1);
+        
+        let tbody = $('table>tbody');
+        let tds =tbody.find('tr');
+        $.each(tds, function(index, item){
+            td = $(item).find('td');
+            $(td[0]).html(index+1);
+        });
+        event.preventDefault();
+    });
+    var down = {};
+    $(window).keydown(function(e) {
+                        down[e.keyCode] = true;
+             })
+            .keyup(function(event){
+                    if (down[45] && Object.keys(down).length == 1){
+                        apend_row(event)
+                    }             
+                down = {}
+            });
+
+    $('#add_row').on('click', apend_row)
+
+    $('table').on('change','select',function(){        
+        let id = $(this).find('option:selected').val();
+        let this_ = this
+        $.post( "/json/yield_dish/"+id+'/{{csrf_token}}', function( data ) {
+            $(this_).parent('td').next().find('input').val(data.out);
+        });
+    })
+    
+    $("form").validate({
+        errorClass:'is-invalid',
+        errorElement:'div',
+        ignore:'tr:last-child>td>select',
+        errorPlacement: function(error, element) {
+            $(element).attr('placeholder',$(element).attr('data-msg'));
+        }           
+        });
+
+</script>

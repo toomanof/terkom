@@ -1,0 +1,47 @@
+{% load i18n %}
+{% load static %}
+<nav class="side-navbar">
+  <div class="side-navbar-wrapper">
+    <div class="sidenav-header d-flex align-items-center justify-content-center">
+      {% include 'includes/active_user.html' %}
+      <div class="sidenav-header-logo"><a href="" class="brand-small text-center"> <strong>B</strong><strong class="text-primary">D</strong></a></div>
+    </div>
+    <div class="main-menu">
+      <ul id="side-main-menu" class="side-menu list-unstyled">
+        <li>
+          <a href="{% url 'calculations' %}"> <i class="icon-bars"></i><span>Калькуляция</span></a></li>
+        <li>
+          <a href="{% url 'report_pa' %}"> <i class="icon-bars"></i><span>Учет продуктов</span></a>
+        </li>
+        <li>
+          <a href="{% url 'menu-list' %}"> <i class="icon-bars"></i><span>Календарь меню</span></a>
+        </li>        
+        <li>
+          <a href="{% url 'product-list' %}"> <i class="icon-bars"></i><span>Номенклатура</span></a>
+        </li>
+        <li>
+          <a href="{% url 'dish-list' %}"> <i class="icon-bars"></i><span>Продукты/Блюда</span></a>
+        </li>        
+        <li>
+          <a href="{% url 'map-list' %}"> <i class="icon-bars"></i><span>Техн. карты</span></a>
+        </li> 
+        <li>
+          <a href="{% url 'people-list' %}"> <i class="icon-bars"></i><span>Физ. лица</span></a>
+        </li>
+        <li>
+          <a href="{% url 'contractor-list' %}"> <i class="icon-bars"></i><span>Контрагенты</span></a>
+        </li>
+      </ul>
+    </div>
+    <div class="admin-menu">
+        <ul id="side-admin-menu" class="side-menu list-unstyled"> 
+            <li> <a href="#pages-invoices-list" data-toggle="collapse" aria-expanded="false" class="collapsed"><i class="icon-interface-windows"></i><span>Накладные</span>
+                <div class="arrow pull-right"><i class="fa fa-angle-down"></i></div></a>
+              <ul id="pages-invoices-list" class="list-unstyled collapse" aria-expanded="false" style="">
+                <li> <a href="{% url 'invoices-arrival-list' %}"><i class="icon-form"></i><span>Приходы</span></a></li>
+                <li> <a href="{% url 'invoices-consumption-list' %}"><i class="icon-form"></i><span>Расходы</span></a></li>                
+              </ul>
+            </li>
+        </ul>
+    </div>
+</nav>

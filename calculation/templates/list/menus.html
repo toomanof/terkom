@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block style %}
+    {% include 'style.html' %}
+{% endblock style %}
+
+{% block script %}
+    {% include 'script.html' %}
+{% endblock script %}
+
+
+{% block crumb %}
+  <ul id="ul-breadcrumb" class="breadcrumb">
+    <li id="li-1" class="breadcrumb-item"><a href="{{parent_href}}">{{parent_title}}</a></li>
+    <li id="li-2" class="breadcrumb-item active">{{title}}</li>
+  </ul>
+{% endblock crumb %}
+{% block content %}    
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header d-flex align-items-center">
+                  <h4>{{title}}</h4>
+                </div>
+                <div class="card-body">
+                    {% block action_buttons %}
+                        <h2>Для создания меню нажмите на необходимый день в календаре.<br> Выделенные дни уже имеют меню.</h2   >
+                    {% endblock action_buttons %}
+                    <div class="line"></div>                  
+                    <div id='calendar'></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        let has_jump = false;
+        function date_in_events(date){
+            finding = false;
+            $.each(var_events, function(index, item){
+                if(item.start == date){finding = true;}
+            });
+            return finding;
+        }
+
+        let var_events=[]
+            {% for item in dates_menu %}
+                {% for key, val in item.items %}
+                    event ={title: 'Меню на весь день',
+                            start:'{{val|date:"Y-m-d"}}'
+                            }
+
+                    var_events.push(event)
+                {%endfor%}
+            {% endfor %}
+
+          let calendar = $('#calendar').fullCalendar({
+            themeSystem:'bootstrap4',
+            locale: 'ru',
+            events: var_events,
+            defaultview:'changeView',
+            eventClick:function(calEvent, jsEvent, view){
+                has_jump = true
+                location.href= '/menu/'+String(calEvent.start._i)+'/update';
+            },
+            dayRender: function (date,cell) {
+                if(date_in_events(moment(date,'yyy-mm-dd').format('YYYY-MM-DD'), var_events))
+                    cell.attr('has_menu',true);
+            }
+          })
+
+          $(calendar).on('click',function(event){
+            if (has_jump != true){
+                if('has_menu' in event.target.attributes){
+                    location.href= '/menu/'+$(event.target).attr('data-date')+'/update';
+                } else if(!('data-date' in event.target.attributes)){
+                        location.href = '/menu/'+$(event.originalEvent.path[5].children[0].children[0].children[0].children[0].children[event.target.cellIndex]).attr('data-date')+'/create';
+                    }
+                    else{
+                        location.href= '/menu/'+$(event.target).attr('data-date')+'/create';
+                    }
+
+            }
+            event.preventDefault()
+          })
+
+    </script>
+{% endblock content %}

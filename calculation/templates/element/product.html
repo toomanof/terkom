@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block style %}
+    {% include 'style.html' %}
+{% endblock style %}
+
+{% block script %}
+    {% include 'script.html' %}
+{% endblock script %}
+
+
+{% block crumb %}
+  <ul id="ul-breadcrumb" class="breadcrumb">
+    <li id="li-1" class="breadcrumb-item"><a href="{% url 'main_calculation' %}">Главная</a></li>
+    <li id="li-2" class="breadcrumb-item"><a href="{{parent_href}}">{{parent_title}}</a></li>
+    <li id="li-3" class="breadcrumb-item active">{{action}}</li>
+  </ul>
+{% endblock crumb %}
+{% block content %}  
+   {% load l10n %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ rows.management_form }}
+        <div class="card">
+            <div class="card-header d-flex align-items-center">
+                <h4>{{action}}</h4>
+            </div>
+            <div class="card-body">
+                {% include 'includes/product_card_body.html'  with form_product=form  %}
+                <div class="line"></div>
+                {% include 'includes/list_messages.html'%}
+                <div class="form-group row">
+                    <div class="col-lg-5 offset-lg-2">
+                        <a href="/product/{{object.pk}}/delete/" class="btn btn-secondary mr-3">Delete</a>
+                        <input type="submit" value="Сохранить" class="btn btn-primary mr-3" name="_save">
+                    </div>
+                </div>                 
+            </div>
+        </div>
+    </form>
+    <script type="text/javascript">
+         $('#create_dish').on('click',function(){  
+            $.post( "/json/create_dish/"+$("#id_name").val()+'/{{csrf_token}}', function( data ) {
+                $("#id_dish").append($("<option selected></option>")
+                             .attr("value",data.dish_id)
+                             .text($("#id_name").val()));
+        });
+    })
+    </script>
+{% endblock content %}

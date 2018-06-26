@@ -1,0 +1,38 @@
+{% load i18n %}
+{% load render_bundle from webpack_loader %}
+<!DOCTYPE html>
+<html lang="en">
+<head>  
+    <title>{% block title %}{% trans "Terkom 'Antratsit'" %}{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">  
+    {% block style %}{% endblock style %}
+        {% block script %}{% endblock script %}
+</head>
+<body>
+    {% block sidebar %}
+        {% include 'includes/side_bar.html'%}  
+    {% endblock sidebar %}
+    <div class="container-fluid">
+        <div class="page">
+            {% block headbar %}
+                {% include 'includes/header_bar.html'%}
+            {% endblock headbar %}
+            <div class="breadcrumb-holder">
+                <div class="container-fluid">
+                    {% block crumb %}{% endblock crumb %}
+                </div>
+            </div>
+            <section>
+            <div class="container-fluid">
+                {% block content %}{% endblock content %}
+            </div>
+            </section>
+            {% block footer %}
+                {% include 'includes/footer.html'%}
+            {% endblock footer %}
+
+        </div>
+    </div>
+</body>
+</html>

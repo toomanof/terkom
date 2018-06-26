@@ -1,0 +1,44 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>  
+	    <title>{% block title %}{% trans "Terkom 'Antratsit'" %}{% endblock %}</title>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">  
+		{% block style %}
+		    <style type="text/css">
+				@font-face {font-family: "Roboto"; src: url(/static/fonts/Roboto/Roboto-Regular.ttf);}
+				@font-face {font-family: "Roboto"; src: url(/static/fonts/Roboto/Roboto-Bold.ttf);font-weight: bold;}
+				@font-face {font-family: "Roboto"; src: url(/static/fonts/Roboto/Roboto-Italic.ttf);font-style: italic;}
+				@font-face {font-family: "Roboto"; src: url(/static/fonts/Roboto/Roboto-BoldItalic.ttf);font-weight: bold;font-style: italic;}
+
+		        @page {
+		            size: A2 landscape;
+		            margin: 1cm; 
+					@frame footer {
+	                    -pdf-frame-content: footerContent;
+	                    bottom: 0cm;
+	                    margin-left: 9cm;
+	                    margin-right: 9cm;
+	                    height: 1cm;
+	                }
+		        }
+			    body {font-family: "Roboto", sans-serif;}
+			    td,th{border: 1px solid #eceeef;}
+			    th{ font-weight: normal; padding-bottom: 5px;padding-left:20rem;padding-top:5px;}
+				td {padding-bottom: 5px;padding-left:2rem;padding-top:5px;background-color: #effff3;}
+				.dish{text-align:left; font-weight:600;	}
+				.td_one, .td_all{text-align: right;}
+		    </style>  
+		{% endblock style %}
+	</head>
+	<body>
+		<div></div>
+		{% block content %}  
+		<div><p>Количество детей<p>{{childrens}}</div><div>{{date_now}}</div>
+  
+		  {% include 'includes/report_calculation.html' %}
+		{% endblock content %}
+	</body>
+</html>

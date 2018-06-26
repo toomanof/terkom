@@ -1,0 +1,35 @@
+<table id="table_data" class="table_data table table-report table-hover">
+  <thead>
+    <tr>
+      <th rowspan="2" style="width:20%"></th>
+      {% for product in products %}
+        <th class="td_product" colspan="2">{{product}}</th>
+      {% endfor %}
+    </tr>
+    <tr>
+      {% for product in products %}
+        <th class="th_one">на одну пор-цию</th>
+        <th class="th_all">на всех детей</th>
+      {% endfor %}
+    </tr>                          
+  </thead>
+  <tbody>
+  {% for item_dish in calculation_day %}
+    <tr>
+      <td class="dish">
+        {{item_dish.dish}}
+      </td>
+      {% for val in item_dish.ingredients %}
+        <td  class="td_one">{% if val.netto_one > 0 %}{{val.netto_one|floatformat:2 }}{% endif %}</td>
+        <td  class="td_all">{% if val.netto_all > 0 %}{{val.netto_all|floatformat:2 }}{% endif %}</td>
+      {% endfor %}
+    </tr>                          
+  {% endfor %}                          
+  </tbody>
+</table>
+<div class="form-inline">
+  <div class="form-group"><label>Расходы за день:</label><strong>{{all_total|floatformat:2}} руб.</strong></div>
+</div>
+<div class="form-inline">
+  <div class="form-group"><label>Расходы за день на одного ребенка:</label><strong>{{total_per_child|floatformat:2}} руб.</strong></div>
+</div>

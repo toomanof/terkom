@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block style %}
+    {% include 'style.html' %}
+{% endblock style %}
+
+{% block script %}
+    {% include 'script.html' %}
+{% endblock script %}
+
+
+{% block crumb %}
+  <ul id="ul-breadcrumb" class="breadcrumb">
+    <li id="li-1" class="breadcrumb-item"><a href="{% url 'main_calculation' %}">Главная</a></li>
+    <li id="li-2" class="breadcrumb-item"><a href="{{parent_href}}">{{parent_title}}</a></li>
+    <li id="li-3" class="breadcrumb-item active">{{action}}</li>
+  </ul>
+{% endblock crumb %}
+{% block content %}  
+   {% load l10n %}
+    <form id="invoice" action="" method="post">
+        {% csrf_token %}
+        {{ rows.management_form }}   
+        <div class="card">
+            <div class="card-header d-flex align-items-center">
+                <h4>{{action}}</h4>
+            </div>
+            <div class="card-body">
+
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label for="number" class="mr-3" >Номер</label>
+                            <input id="number" name="number" type="text" placeholder="номер накладной" class="mr-3 form-control" value="{{object.number}}" minlength="1" required data-msg="Необходмо ввести № накладной">
+                            <p class="text-danger" v-if="errors.has('number')"></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="created_at" class="mr-3">Дата создания</label>
+                            <input id="created_at" name="created_at" type="date"  class="mr-3 form-control " value="{{object.created_at|date:'Y-m-d'}}" required data-msg="Укажите дату накладной">
+                        </div>
+                        <div class="form-group">
+                            <label for="motion" class="mr-3">Тип движения</label>
+                            {{form.motion}}
+                        </div>                        
+                    </div>
+                    <div class="form-group">
+                        <label for="contractor" class="mr-3">Контрагент</label>
+                        {{form.contractor}}
+                    </div>  
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th style="width: 42px;">№</th>
+                                <th style="width: 33%;">Товар</th>
+                                <th class="required" style="width: 25%;">Количество</th>
+                                <th class="required" style="width: 25%;">Цена</th>
+                                <th>Delete?</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div id="table-scroll" class="table-scroll">
+                        <table class="table table-striped table-sm">
+                            <tbody>
+                              {% for row in rows%}
+                                    <tr>{{row.id}}
+                                        <td>{{forloop.counter}}</td>
+                                        <td>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                        {{row.product}}
+                                                    <div class="input-group-append">
+                                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#productModalCenter">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>                                            
+                                            </div>
+                                        </td>
+                                        <td>{{row.qty}}</td>
+                                        <td>{{row.price}}</td>
+                                        <td></td>
+                                        <td>{{row.DELETE}}</td>
+                                    </tr>
+                              {% endfor %}
+                              <tfoot>
+                                  <tr>
+                                      <td colspan="4">Сумма накладной</td>
+                                      <td></td>
+                                      <td></td>
+                                  </tr>
+                              </tfoot>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-lg-12">
+                            <input id="add_row" type="button" value="Добавить товар" class="btn btn-primary mr-3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="form-inline">
+                    <div class="form-group col-lg-6">
+                        <label for="delivered" class="mr-3">сдал</label>
+                        {{form.delivered}}
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="adopted" class="mr-3">принял</label>
+                        {{form.adopted}}
+                    </div>                    
+                </div>
+                <div class="line"></div>
+                {% include 'includes/list_messages.html' %}
+                <div class="form-group row">
+                    <div class="col-lg-5 offset-lg-2">
+                        <a href="/invoice/{{object.pk}}/delete/" class="btn btn-secondary mr-3">Delete</a>
+                        <input type="submit" value="Сохранить" class="btn btn-primary mr-3" name="_save">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    {% include 'includes/js_action_for_elements.html' with dom_element="items" focus_column="3"%}
+
+<!-- Modal -->
+<div class="modal fade" id="productModalCenter" tabindex="-1" role="dialog" aria-labelledby="productModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Добавить номенклатуру</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+            <form id="form_product" method="POST" action="">
+            {% include 'includes/product_card_body.html'  with form_product=form_product %}
+            </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+        <button id="save_product" type="button" class="btn btn-primary">Сохранить</button>
+      </div>
+    </div>
+  </div>
+</div>
+    <script type="text/javascript">
+        let cur_button = null;
+        $('#save_product').on('click', function(e){
+            console.log(  );
+            $.post({% url 'product-new' %}, $('#form_product').serializeArray(), function(data){
+                console.log(data);
+            };
+
+            $('#productModalCenter').modal('hide')
+        });
+        $('#productModalCenter').on('show.bs.modal', function (e) {
+            cur_button = e.relatedTarget;
+          console.log(cur_button)
+        });
+        $('#productModalCenter').on('hide.bs.modal', function (e) {
+          console.log($(cur_button.parentNode.parentNode).find('select'))
+        });  
+    </script>
+{% endblock content %}
