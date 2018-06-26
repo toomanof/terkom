@@ -39,6 +39,16 @@ def create_dish(request, **kwargs):
         data ={'dish_id':new_dish.id}
     return JsonResponse(data)
 
+def create_product(request, **kwargs):
+    if request.POST:
+        new_product = Product()
+        new_product.name = request.POST['name']
+        new_product.dish_id = request.POST['dish']
+        new_product.unit_id = request.POST['unit']
+        new_product.weight = request.POST['weight']
+        new_product.save()
+    return JsonResponse({'key':new_product.id,'name':new_product.name})
+
 #-----------     Additional Classes   ----------------------
 
 class ActionVew(View):

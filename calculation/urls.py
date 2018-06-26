@@ -12,7 +12,7 @@ from .views.views import ContractorCreateView, ContractorView, ContractorsView
 from .views.views import DeleteContractorView
 from .views.views_reports import CalculationView,CalculationPdfView
 from .views.views_reports import ReportProductAccounting
-from .views.views import redirect_to, create_dish
+from .views.views import redirect_to, create_dish, create_product
 from .views.views_invoice import InvoiceView ,InvoicesView, InvoiceCreateView
 from .views.views_invoice import InvoiceDeleteView
 from .constants import *
@@ -131,5 +131,6 @@ urlpatterns = [
                                                 name='menus-'+COPY_TO_TOMORROW),
     
     url(r'^json/yield_dish/(?P<dish>\d*)/(?P<csrfmiddlewaretoken>.+)',yield_dish, name='yield_dish'),
-    url(r'^json/create_dish/(?P<name>.*)/(?P<csrfmiddlewaretoken>.+)',create_dish, name='create_dish')
+    url(r'^json/create_dish/(?P<name>.*)/(?P<csrfmiddlewaretoken>.+)',create_dish, name='create_dish'),
+    url(r'^json/product/add/?$',create_product, name='json-product-new'),
 ]

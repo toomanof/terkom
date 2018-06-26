@@ -59,6 +59,7 @@
                                 <th style="width: 42px;">№</th>
                                 <th style="width: 33%;">Товар</th>
                                 <th class="required" style="width: 25%;">Количество</th>
+                                <th class="required" style="width: 5%;">Ед. изм.</th>
                                 <th class="required" style="width: 25%;">Цена</th>
                                 <th>Delete?</th>
                             </tr>
@@ -83,9 +84,12 @@
                                             </div>
                                         </td>
                                         <td>{{row.qty}}</td>
+                                        <td data-unit></td>
                                         <td>{{row.price}}</td>
-                                        <td></td>
-                                        <td>{{row.DELETE}}</td>
+                                        <td data-sum></td>
+                                        <td>{{row.DELETE}}
+                                            <a id="del_row" type="button" class="btn btn-success append-item"><i class="fa fa-minus" aria-hidden="true"></i></a>
+                                        </td>
                                     </tr>
                               {% endfor %}
                               <tfoot>
@@ -143,7 +147,8 @@
       </div>
       <div class="modal-body">
             <form id="form_product" method="POST" action="">
-            {% include 'includes/product_card_body.html'  with form_product=form_product %}
+                {% csrf_token %}
+                {% include 'includes/product_card_body.html'  with form_product=form_product %}
             </form>
       </div>
       <div class="modal-footer">
@@ -157,9 +162,13 @@
         let cur_button = null;
         $('#save_product').on('click', function(e){
             console.log(  );
-            $.post({% url 'product-new' %}, $('#form_product').serializeArray(), function(data){
+            $.post("{% url 'json-product-new' %}", $('#form_product').serializeArray(), function(data){
+                let select_obj = $(cur_button.parentNode.parentNode).find('select')
+                $(select_obj).append($("<option selected></option>")
+                             .attr("value",data.key)
+                             .text(data.name));
                 console.log(data);
-            };
+            });
 
             $('#productModalCenter').modal('hide')
         });
@@ -168,7 +177,7 @@
           console.log(cur_button)
         });
         $('#productModalCenter').on('hide.bs.modal', function (e) {
-          console.log($(cur_button.parentNode.parentNode).find('select'))
+          
         });  
     </script>
 {% endblock content %}
