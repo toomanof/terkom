@@ -63,7 +63,7 @@
                         <thead>
                             <tr>
                                 <th class="td_number">№</th>
-                                <th class="td_30">Продукт</th>
+                                <th class="td_30">Ингридиенты</th>
                                 <th class="td_30 required">Брутто</th>
                                 <th class="td_30 required">Нетто</th>
                                 <th>Delete?</th>
@@ -80,7 +80,10 @@
                                         <td class="td_30">{{row.product}}</td>
                                         <td class="td_30">{{row.brutto}}</td>
                                         <td class="td_30">{{row.netto}}</td>
-                                        <td>{{row.DELETE}}</td>
+                                        <td>
+                                            <a id="del_row" type="button" class="btn btn-success append-item"><i class="fa fa-minus" aria-hidden="true"></i></a>
+                                            {{row.DELETE}}
+                                        </td>
                                          <!--<td>{% if not forloop.last %}<a id="del_row" type="button" class="btn btn-success append-item"><i class="fa fa-minus" aria-hidden="true"></i></a>{% endif %}</td> -->
                                     </tr>
                                 {% endfor %}
@@ -97,10 +100,14 @@
             </div>
             <div class="card-footer">
                 <div class="form-inline">
-                    <div class="form-group col-sm-5">
+                    <div class="form-group">
                         <label for="batch_output" class="mr-3">{{form.batch_output.label}}</label>
                         {{form.batch_output}}
                     </div>
+                    <div class="form-group">
+                        <label for="batch_output" class="ml-3 mr-3">{{form.unit.label}}</label>
+                        {{form.unit}}
+                    </div>                    
                 </div>
             </div>
         </div>        
@@ -116,5 +123,47 @@
         </div>
     </form>
     {% include 'includes/js_action_for_elements.html' with dom_element="items" focus_column="3"%}
+<!-- Modal -->
+<div class="modal fade" id="productModalCenter" tabindex="-1" role="dialog" aria-labelledby="productModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Добавить номенклатуру</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+            <form id="form_product" method="POST" action="">
+                {% csrf_token %}
+                {% include 'includes/product_card_body.html'  with form_product=form_product %}
+            </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+        <button id="save_product" type="button" class="btn btn-primary">Сохранить</button>
+      </div>
+    </div>
+  </div>
+</div>
+    <script type="text/javascript">
+        let cur_button = null;
+        $('#save_product').on('click', function(e){
+            $.post("{% url 'json-product-new' %}", $('#form_product').serializeArray(), function(data){
+                let select_obj = $(cur_button.parentNode.parentNode).find('select')
+                $(select_obj).append($("<option selected></option>")
+                             .attr("value",data.key)
+                             .text(data.name));
+            });
+
+            $('#productModalCenter').modal('hide')
+        });
+        $('#productModalCenter').on('show.bs.modal', function (e) {
+            cur_button = e.relatedTarget;
+        });
+        $('#productModalCenter').on('hide.bs.modal', function (e) {
+          
+        });  
+    </script>
 {% endblock content %}
 

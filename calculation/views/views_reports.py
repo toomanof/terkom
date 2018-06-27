@@ -1,3 +1,8 @@
+'''
+  -----------     Reports    ----------------------
+'''
+
+
 from datetime import date, datetime
 
 from django.conf import settings
@@ -11,55 +16,55 @@ from ..service.calculations import get_report_product_accounting
 from ..service.render import Render
 
 
-#-----------     Reports    ----------------------
-
-class CalculationPdfView(View):  
+class CalculationPdfView(View):
 
     def get(self, request, *args, **kwargs):
-        print(int(kwargs['childrens']))
-        context ={}
+        context = {}
         if(kwargs):
             date_now = date(int(kwargs['year']),
                             int(kwargs['month']),
                             int(kwargs['day']))
-            context['date_now'] =dateformat.format(date_now,
-                                                   settings.DATE_FORMAT)
+            context['date_now'] = dateformat.format(date_now,
+                                                    settings.DATE_FORMAT)
             context.update(get_report_calculation_of_day(
-                            date_now,
-                            int(kwargs['childrens'])))
+                date_now,
+                int(kwargs['childrens'])))
         else:
-            context['date_now'] =datetime.now().date()
-            context['childrens'] =250        
-        return Render._render('reports/report_calculation.html', context)
+            context['date_now'] = datetime.now().date()
+            context['childrens'] = 250
+        return Render.render('reports/report_calculation.html', context)
 
-class CalculationView(TemplateView):  
+
+class CalculationView(TemplateView):
 
     template_name = 'list/calculations.html'
+
     def get_context_data(self, **kwargs):
         context = super(CalculationView, self).get_context_data(**kwargs)
         if(kwargs):
             context['date_now'] = date(int(kwargs['year']),
-                     int(kwargs['month']),
-                     int(kwargs['day']))
+                                       int(kwargs['month']),
+                                       int(kwargs['day']))
             context.update(get_report_calculation_of_day(
-                            context['date_now'],
-                            int(kwargs['childrens'])))
+                context['date_now'],
+                int(kwargs['childrens'])))
         else:
-            context['date_now'] =datetime.now().date()
-            context['childrens'] =250
+            context['date_now'] = datetime.now().date()
+            context['childrens'] = 250
         return context
 
 
 class ReportProductAccounting(TemplateView):
-    
+
     template_name = 'report_pa.html'
+
     def get_context_data(self, **kwargs):
         context = super(ReportProductAccounting, self).\
-                        get_context_data(**kwargs)
+            get_context_data(**kwargs)
         if kwargs:
             period = {'from': date(int(kwargs['from_year']),
-                                 int(kwargs['from_month']),
-                                 int(kwargs['from_day'])),
+                                   int(kwargs['from_month']),
+                                   int(kwargs['from_day'])),
                       'to': date(int(kwargs['to_year']),
                                  int(kwargs['to_month']),
                                  int(kwargs['to_day']))}

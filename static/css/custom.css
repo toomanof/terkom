@@ -81,7 +81,7 @@ a>.wrapper:active{
 
 .table-scroll{
     overflow: auto;
-    max-height: 400px;
+    max-height: 500px;
     margin: 1rem 0;
 }
 

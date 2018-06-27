@@ -10,15 +10,14 @@ from .dish import Dish
 
 class Product(Model):
     name = CharField(max_length=250, verbose_name='Название')
-    unit = ForeignKey('Unit', verbose_name='ед. изм',null=True,
+    unit = ForeignKey('Unit', verbose_name='ед. изм', null=True,
                       blank=True, default=None, on_delete=PROTECT)
-    dish = ForeignKey('Dish', verbose_name='продукт',null=True,
-                      related_name='product',blank=True, default=None,
+    dish = ForeignKey('Dish', verbose_name='продукт', null=True,
+                      related_name='product', blank=True, default=None,
                       on_delete=PROTECT)
     weight = DecimalField(max_digits=15, decimal_places=3,
-                                  verbose_name='вес в килограммах \
-                                                одной единицы',
-                                  default=0, null=True)
+                          verbose_name='вес в килограммах одной единицы',
+                          default=1, null=True)
     def __str__(self):
         return self.name
 
@@ -38,7 +37,7 @@ class Product(Model):
 
     def get_absolute_url(self):
         return reverse('product-update', kwargs={'pk': self.pk})
-        
+
     class Meta:
         db_table = 'appcalc_products'
         app_label = 'calculation'
@@ -49,6 +48,6 @@ class Product(Model):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'unit','weight',)
+    list_display = ('name', 'unit', 'weight',)
     search_fields = ('name', 'unit',)
-    list_display_links =('name', 'unit',)
+    list_display_links = ('name', 'unit',)

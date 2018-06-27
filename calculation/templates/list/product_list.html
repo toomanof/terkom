@@ -28,14 +28,17 @@
                     {% block action_buttons %}
                         <a class="btn btn-success append-item" href="{%url 'product-new' %}"> <i class="fa fa-plus" aria-hidden="true"></i></a>
                     {% endblock action_buttons %}
-                    <div id="table-scroll" class="table-scroll-100v">
-                        <table id="table_data" class="table_data table table-striped table-hover">
+                    <div class="line"></div>
+                    <table id="table_data" class="table_data table table-striped table-hover">
                             <thead>
-                                <th>№п/п</th>
-                                <th  style="width:30%">Наименование</th>
-                                <th style="width:5%">Ед. изм</th>
+                                <th style="width: 8%">№п/п</th>
+                                <th style="width:66%">Наименование</th>
+                                <th style="width:13%">Ед. изм</th>
                                 <th>Вес, кг.</th>
                             </thead>
+                    </table>
+                    <div id="table-scroll" class="table-scroll">
+                        <table class="table table-striped table-sm">                           
                             <tbody>
                                 {% for item in object_list%}
                                     <tr>

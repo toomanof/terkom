@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'calculation.apps.CalculationConfig',
-    'debug_toolbar.apps.DebugToolbarConfig',
+#    'debug_toolbar.apps.DebugToolbarConfig',
     'webpack_loader'
 ]
 
@@ -52,7 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+#    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'root.urls'
@@ -60,7 +60,7 @@ ROOT_URLCONF = 'root.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR +'/templates'],
+        'DIRS': [BASE_DIR + '/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -123,11 +123,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
+if not DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+    STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/node_modules/'),)
+else:
+    STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),
+                        os.path.join(BASE_DIR, 'static/node_modules/'),)
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/node_modules/'),)
+
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
@@ -153,7 +158,11 @@ DEBUG_TOOLBAR_CONFIG = {
     'EXCLUDE_URLS': ('/admin',),
     'INTERCEPT_REDIRECTS': False,
 }
-INTERNAL_IPS = ('127.0.0.1','172.16.1.13','192.168.86.1','172.16.13.13','172.16.0.3')
+INTERNAL_IPS = ('127.0.0.1',
+                '172.16.1.13',
+                '192.168.86.1',
+                '172.16.13.13',
+                '172.16.0.3')
 
 DATE_INPUT_FORMATS = ['%d-%m-%Y']
 

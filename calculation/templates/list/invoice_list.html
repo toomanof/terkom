@@ -31,25 +31,29 @@
                     <div class="line"></div>                  
                     <table id="table_data" class="table_data table table-striped table-hover">
                         <thead>
-                            <th>номер</th>
-                            <th>дата</th>
-                            <th>контрагент</th>
+                            <th style="width: 8%;">номер</th>
+                            <th style="width: 25%;">дата</th>
+                            <th style="width: 55%;">контрагент</th>
                             <th>сумма</th>
                         </thead>
-                        <tbody>
-                            {% for item in object_list%}
-                                <tr>
-                                    <td>
-                                        <a href="{% url 'invoice-update' pk=item.id%}">{{item.number}}</a>
-                                    </td>
-                                    <td><a href="/invoice/{{item.id}}/update">{{item.created_at|date:"d.m.Y"}}</a>
-                                    </td>
-                                    <td>{{item.contractor}}</td>
-                                    <td>{{item.total|floatformat:2}}</td>
-                                </tr>
-                            {% endfor %}                    
-                        </tbody>
                     </table>
+                    <div id="table-scroll" class="table-scroll">
+                        <table class="table table-striped table-sm">                        
+                            <tbody>
+                                {% for item in object_list%}
+                                    <tr>
+                                        <td>
+                                            <a href="{% url 'invoice-update' pk=item.id%}">{{item.number}}</a>
+                                        </td>
+                                        <td><a href="/invoice/{{item.id}}/update">{{item.created_at|date:"d.m.Y"}}</a>
+                                        </td>
+                                        <td>{{item.contractor}}</td>
+                                        <td>{{item.total|floatformat:2}}</td>
+                                    </tr>
+                                {% endfor %}                    
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

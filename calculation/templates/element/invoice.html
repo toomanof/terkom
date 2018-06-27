@@ -161,20 +161,17 @@
     <script type="text/javascript">
         let cur_button = null;
         $('#save_product').on('click', function(e){
-            console.log(  );
             $.post("{% url 'json-product-new' %}", $('#form_product').serializeArray(), function(data){
                 let select_obj = $(cur_button.parentNode.parentNode).find('select')
                 $(select_obj).append($("<option selected></option>")
                              .attr("value",data.key)
                              .text(data.name));
-                console.log(data);
             });
 
             $('#productModalCenter').modal('hide')
         });
         $('#productModalCenter').on('show.bs.modal', function (e) {
             cur_button = e.relatedTarget;
-          console.log(cur_button)
         });
         $('#productModalCenter').on('hide.bs.modal', function (e) {
           
