@@ -31,8 +31,12 @@ class InvoiceForm(ModelForm):
                   'contractor','delivered',
                    'adopted','motion']
         widgets ={
-            'created_at':DateInput(attrs={'class': 'form-control mr-3'}),
-            'contractor':Select(attrs={'class': 'form-control mr-3'}),
+            'created_at':DateInput(attrs={'class': 'form-control mr-3',
+                                          'required':True,
+                                          'data-msg':'Укажите дату накладной'}),
+            'contractor':Select(attrs={'class': 'form-control mr-3',
+                                       'required':True,
+                                       'data-msg':'Количество не указано'}),
             'delivered':Select(attrs={'class': 'form-control mr-3'}),
             'adopted':Select(attrs={'class': 'form-control mr-3'}),
             'motion':Select(attrs={'class': 'form-control mr-3'}),

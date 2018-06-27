@@ -166,6 +166,7 @@
                 $(select_obj).append($("<option selected></option>")
                              .attr("value",data.key)
                              .text(data.name));
+                $('#productModalCenter').find('input').val('');        
             });
 
             $('#productModalCenter').modal('hide')

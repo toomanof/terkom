@@ -13,8 +13,10 @@ from django.db.models import DecimalField
 from django.db.models import DateField
 from django.db.models import PositiveIntegerField
 from django.db.models import SmallIntegerField
-from calculation.service.helpers import dictfetchall, post
+from django.db.models.signals import pre_delete 
+from calculation.service.helpers import dictfetchall, post, delete
 from calculation.constants import ARRIVAL, EXPENSE, TYPE_CHOICES
+
 
 
 
@@ -42,6 +44,10 @@ class Invoice(Model):
     def save(self, *args, **kwargs):
         super(Invoice, self).save(*args, **kwargs)
         post(self)
+
+    def delete(self, *args, **kwargs):
+        delete(self)
+        super(self.__class__, self).delete(*args, **kwargs)
 
     @property
     def total(self):

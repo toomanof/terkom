@@ -1,3 +1,4 @@
+import logging
 from ..constants import *
 from .views import ActionVew, ListViewFor, DeleteViewMixin
 from ..models import Invoice, InvoiceItems
@@ -49,8 +50,8 @@ class InvoiceView(ActionVew, UpdateView):
         self.object = self.get_object()
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        rows = InvoiceItemsFormSet(self.request.POST,
-                                              instance=self.object)
+        rows = InvoiceItemsFormSet(request.POST,
+                                   instance=self.object)
         if form.is_valid() and rows.is_valid():
             return self.form_valid(form, rows)
         return self.form_invalid(form, rows)
@@ -84,19 +85,25 @@ class InvoiceCreateView(ActionVew, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(InvoiceCreateView, self).get_context_data(**kwargs)
-        context['rows'] = InvoiceItemsFormSet(instance=self.object)
+        logging.error(self.request)
+        if self.request.method == 'POST':            
+            context['rows'] = InvoiceItemsFormSet(instance=None)
+        else:
+            context['rows'] = InvoiceItemsFormSet(instance=self.object)
+        context['form_product'] = ProductForm()
         return context
 
     def post(self, request, *args, **kwargs):
 
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        rows = InvoiceItemsFormSet(self.request.POST)
+        rows = InvoiceItemsFormSet(request.POST)
         if form.is_valid() and rows.is_valid():
             return self.form_valid(form, rows)
         return self.form_invalid(form, rows)
 
     def form_valid(self, form, rows):
+        logging.error(form)
         self.object = form.save()
         rows.instance = self.object
         fs_not_save = rows.save(commit=False)
@@ -105,16 +112,18 @@ class InvoiceCreateView(ActionVew, CreateView):
                 row.save()        
                 reg_price = RegPrice(product_id=row.product_id,
                                      price=row.price,
-                                     created_at=form.created_at)
+                                     created_at=self.object.created_at)
                 reg_price.save()
 
-        return HttpResponseRedirect(self.get_success_url())
+        return  super(self.__class__, self).form_valid(form)
     
     def form_invalid(self, form, rows):
         for error in rows.errors:
             messages.error(self.request,error)
-        return self.render_to_response(self.get_context_data(form=form,
-                                                             rows=rows)) 
+        self.object= self.get_queryset()
+        return super(self.__class__, self).form_invalid(form)
+
+
 class InvoiceDeleteView(DeleteViewMixin, DeleteView):
     
     model = Invoice

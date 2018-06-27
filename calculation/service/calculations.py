@@ -1,5 +1,4 @@
 import logging
-from django.db.models import Sum
 from ..models import Menu, Registration, Product
 from .helpers import get_current_price
 
@@ -17,20 +16,24 @@ def get_report_calculation_of_day(day, qty_children):
     keys_row = ('product', 'netto_all', 'netto_one',)
     products = []
 
-    # выбираюся блюда с продуктами присутвующими в них
-    calculation_day = []
-    for item in Menu.objects.filter(created_at=day):
-        row_calc = {'dish': item.dish}
-        ingredients = []
-        dish_ingredients = item.dish.ingredients
+    def select_ingredients(dish_ingredients, ingredients):
+        '''
+            Выбор по рекурсии всех ингридиентов входящих
+            в состав блюда
+        '''
+
         if dish_ingredients:
             # если блюдо готовилось на основе технологической карты,
             # то выбираются задействованные продукты
-            ingredients = [dict(zip(keys_row,
-                                    [ingredient.product,
-                                     ingredient.brutto / 1000 * qty_children,
-                                     ingredient.brutto, 0]))
-                           for ingredient in dish_ingredients]
+            ingredients += [dict(zip(keys_row,
+                                     [ingredient.product,
+                                      ingredient.brutto / 1000 * qty_children,
+                                      ingredient.brutto, 0]))
+                            for ingredient in dish_ingredients]
+
+            for ingredient in dish_ingredients:
+                if hasattr(ingredient, 'ingredients'):
+                    select_ingredients(ingredient.ingredients, ingredients)
         else:
             # если блюдо самостоятельный продукт, то в список ингридиентов
             # включается он сам
@@ -39,6 +42,24 @@ def get_report_calculation_of_day(day, qty_children):
                                         [item.dish,
                                          int(out[0]) / 1000 * qty_children,
                                          int(out[0]), 0])))
+            return
+
+    def sort_ingredients(ingredients):
+        alen = len(ingredients)
+        for index in range(1, alen):
+            for k in range(0, alen - index):
+                if ingredients[k]['product'].name > ingredients[k+1]['product'].name:
+                    ingredients[k], ingredients[k+1] = ingredients[k+1], ingredients[k]
+        return
+
+    calculation_day = []
+    for item in Menu.objects.filter(created_at=day):
+        row_calc = {'dish': item.dish}
+        ingredients = []
+        # выбираюся блюда с продуктами присутвующими в них
+        select_ingredients(item.dish.ingredients, ingredients)
+        sort_ingredients(ingredients)
+        logging.error(ingredients)
         row_calc['ingredients'] = ingredients
         calculation_day.append(row_calc)
 
@@ -78,6 +99,7 @@ def get_report_calculation_of_day(day, qty_children):
     # Приводятся к типу матрицы цены продуктов действующие
     # на день калкуляции
     row_price = {'dish': 'Цена, руб:'}
+    logging.error(products)
     row_price['ingredients'] = [dict(zip(keys_row,
                                          (product,
                                           get_current_price(product, day))))

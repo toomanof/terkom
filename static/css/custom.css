@@ -65,12 +65,19 @@ a>.wrapper:active{
     color: #ef9048;
 }
 
+td.td_all, td.td_one{
+    text-align: right;
+}
 .table-report td, .table-report th{
     border: 1px solid #eceeef;
-    color: #000;    
+    color: #000;
+    padding: 2px;
+    vertical-align: middle;
 }
 .table-report thead th{
-    border-bottom: 1px solid #eceeef;   
+    border-bottom: 1px solid #eceeef; 
+    text-align: center;
+
 }
 
 .table-report tbody tr:last-child,
@@ -114,4 +121,9 @@ a>.wrapper:active{
 
 .form-inline .form-group{
     margin-bottom: 1rem !important;
+}
+
+
+td .form-group{
+    margin: 0;
 }

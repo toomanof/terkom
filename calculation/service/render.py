@@ -19,7 +19,7 @@ def fetch_pdf_resources(uri, rel):
                             uri.replace(settings.MEDIA_URL, ""))
     else:
         print('3sd')
-        path = os.path.join(settings.STATICFILES_DIRS[0],"fonts", uri)
+        path = os.path.join(settings.STATICFILES_DIRS[0], "fonts", uri)
 
     print(path)
     return path

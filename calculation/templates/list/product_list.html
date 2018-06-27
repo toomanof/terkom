@@ -34,6 +34,7 @@
                                 <th style="width: 8%">№п/п</th>
                                 <th style="width:66%">Наименование</th>
                                 <th style="width:13%">Ед. изм</th>
+                                <th style="width:13%">Продукт</th>
                                 <th>Вес, кг.</th>
                             </thead>
                     </table>
@@ -45,6 +46,7 @@
                                         <td>{{forloop.counter}}</td>
                                         <td><a href="{% url 'product-update' pk=item.id%}">{{item.name}}</a></td>
                                         <td>{{item.unit|default:""}}</td>
+                                        <td>{{item.dish|default:""}}</td>
                                         <td>{{item.weight|default:""}}</td>
                                     </tr>
                                 {% endfor %}                    

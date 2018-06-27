@@ -5,37 +5,57 @@ from ..models.registration import Registration
 
 
 def post(invoce):
-    Registration.objects.filter(invoce_id=invoce.id).delete()
+
+    #Registration.objects.filter(invoce_id=invoce.id).delete()
     #RegPrice.objects.filter(invoce_id=invoce.id).delete()
 
     for item in invoce.items.all():
         summa = round(float(item.qty) * float(item.price), 2)
-        registr = Registration(invoce=invoce, from_of=invoce.contractor,
-                               product=item.product, qty=item.qty,
-                               summa=summa, motion=invoce.motion,
-                               created_at=invoce.created_at)
-        registr.save()      
-        
-        if RegPrice.objects.filter(product=item.product)\
-                   .filter(created_at=invoce.created_at).exists():
-          reg_price = RegPrice(created_at=invoce.created_at,
-                               product=item.product, price=item.price,
-                               invoce=invoce)
-          reg_price.save()
-        else:                   
-          RegPrice.objects.filter(product=item.product)\
-                   .filter(created_at=invoce.created_at)\
-                   .update(price=item.price, invoce=invoce)
-        
+        registr = Registration.objects.filter(invoce=invoce,
+                                              product=item.product,
+                                              motion=invoce.motion)
+        if not registr:
+            registr = Registration(invoce=invoce,
+                                   from_of=invoce.contractor,
+                                   product=item.product,
+                                   qty=item.qty,
+                                   summa=summa, motion=invoce.motion,
+                                   created_at=invoce.created_at)
+            registr.save()
+        else:
+            registr.update(from_of=invoce.contractor,
+                           created_at=invoce.created_at,
+                           qty=item.qty, summa=summa)
 
-def get_current_price(product, find_date=None):
-    logging.error(product)
+        reg_price = RegPrice.objects.filter(product=item.product,
+                                            invoce=invoce)
+        if not reg_price:
+            reg_price = RegPrice(created_at=invoce.created_at,
+                                 product=item.product,
+                                 dish=item.product.dish,
+                                 price=item.price,
+                                 invoce=invoce)
+            reg_price.save()
+        else:
+            reg_price.update(dish=item.product.dish,
+                             price=item.price,
+                             created_at=invoce.created_at)
+
+
+def delete(invoce):
+    Registration.objects.filter(invoce_id=invoce.id).delete()
+    RegPrice.objects.filter(invoce_id=invoce.id).delete()
+
+
+def get_current_price(dish, find_date=None):
+    logging.error(dish.id)
     if find_date is None:
         find_date = date(datetime.today())
-    result = RegPrice.objects.filter(product_id=product.id).\
-                              filter(created_at__lte=find_date).\
+    result = RegPrice.objects.filter(dish_id=dish.id,
+                                     created_at__lte=find_date).\
                               order_by('-created_at')
     return result[0].price if result else 0
+
 
 def dictfetchall(cursor):
     '''Returns all rows from a cursor as a dict'''
