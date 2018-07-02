@@ -1,3 +1,4 @@
+from datetime import date
 from django.contrib import messages
 from django.db.models import ProtectedError
 
@@ -17,11 +18,32 @@ from ..models import Dish
 from ..models import Product
 from ..models import People
 from ..models import Contractor
+from ..service import calculations
+from ..service import helpers
 
 from ..forms import DishForm, ProductForm, PeopleForm, ContractorForm
 from ..constants import *
 
 
+
+
+@csrf_exempt
+def get_curent_price_product(request, **kwargs):  
+    data  = {'price': 0}
+    if(kwargs):
+        data['price'] = helpers.get_current_price_product(kwargs['product_id'],
+                                                 kwargs['created_at'])
+    return JsonResponse(data)
+
+def get_invoice_out(request, **kwargs):
+    if(kwargs):
+        date_now = date(int(kwargs['year']),
+                        int(kwargs['month']),
+                        int(kwargs['day']))    
+        calculations.get_invoice_out(date_now, int(kwargs['childrens']))
+    return redirect('invoices-consumption-list')
+
+@csrf_exempt
 def update_products(request):
     products = Product.objects.filter(dish_id__isnull=True)
     for product in products:

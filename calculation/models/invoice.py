@@ -1,6 +1,6 @@
 import datetime
-import decimal
 from django.urls import reverse
+from django.urls import reverse_lazy
 from django.contrib import admin
 from django.db import connection
 from django.db.models import Model
@@ -13,11 +13,8 @@ from django.db.models import DecimalField
 from django.db.models import DateField
 from django.db.models import PositiveIntegerField
 from django.db.models import SmallIntegerField
-from django.db.models.signals import pre_delete 
 from calculation.service.helpers import dictfetchall, post, delete
-from calculation.constants import ARRIVAL, EXPENSE, TYPE_CHOICES
-
-
+from calculation.constants import ARRIVAL, TYPE_CHOICES
 
 
 class Invoice(Model):
@@ -43,10 +40,12 @@ class Invoice(Model):
 
     def save(self, *args, **kwargs):
         super(Invoice, self).save(*args, **kwargs)
-        post(self)
+        if self.motion == ARRIVAL:
+            post(self)
 
     def delete(self, *args, **kwargs):
-        delete(self)
+        if self.motion == ARRIVAL:
+            delete(self)
         super(self.__class__, self).delete(*args, **kwargs)
 
     @property
@@ -61,12 +60,12 @@ class Invoice(Model):
     @property
     def rows(self):
         return self.items.all()
-    
+
     def get_absolute_url(self):
         return reverse('invoice-update', kwargs={'pk': self.pk})
-    
+
     def get_success_url(self):
-        return reverse_lazy('invoices-arrival-list')        
+        return reverse_lazy('invoices-arrival-list')
 
     class Meta:
         app_label = 'calculation'

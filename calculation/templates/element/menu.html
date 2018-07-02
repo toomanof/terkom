@@ -22,21 +22,26 @@
    {% load l10n %}
     <form action="" method="POST">        
         {% csrf_token %}
-        {{ formset.management_form }}
+        {{ rows.management_form }}
         <input type="hidden" name="action" value="{{action}}">
         <div class="card">
-            <div class="card-header">
-                <div class="form-group row">
+            <div class="card-body">
+                <div class="form-inline">
+                <div class="form-group col-md-4">
                     <h4 class="mr-3">Дата меню</h4>
-                    <input id="created_at" name="created_at" type="date" placeholder="дата меню" class="col-lg-2 form-control" style="top:-16px;" value="{{created_at|date:'Y-m-d'}}" {% if action != 'create' %} readonly{%endif%}>
+                    <input id="created_at" name="created_at" type="date" placeholder="дата меню" class="form-control" style="top:-16px;" value="{{created_at|date:'Y-m-d'}}" {% if action != 'create' %} readonly{%endif%}>
+                </div>
+                <div class="form-group">
+                    <label for="number" class="mr-3" >{{form.food_intake.label}}</label>
+                    {{form.food_intake}}
                 </div>
             </div>
+            </div>
+        </div>
+        <div class="card">
             <div class="card-body">
                 <div class="form-group row">
-                    <div class="col-lg-4">
-                        <input id="add_row" type="button" value="Добавить блюдо" class="btn btn-primary mr-3">
-                    </div>
-                    <div class="col-lg-8">
+                    <div class="col-lg-12">
                         {% include 'includes/list_messages.html' %}
                     </div>
                 </div>  
@@ -53,7 +58,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for form in formset%}
+                            {% for form in rows%}
                                 <tr>
                                     {{form.id}}
                                     {{form.created_at}}
@@ -61,24 +66,28 @@
                                     <td>{{form.food_intake}}</td>
                                     <td>{{form.dish}}</td>
                                     <td>{{form.out}}</td>
-                                    <td>{{form.DELETE}}</td>
- <!--                                   <td>{% if not forloop.last %}<a id="del_row" type="button" class="btn btn-success append-item"><i class="fa fa-minus" aria-hidden="true"></i></a>{% endif %}</td> -->
+                                    <td>{{form.DELETE}}
+                                        <a id="del_row" type="button" class="btn btn-success append-item"><i class="fa fa-minus" aria-hidden="true"></i></a>
+                                    </td>
                                 </tr>
                             {%endfor%}
                         </tbody>
                     </table>
                 </div>
+                <div class="col-lg-4">
+                    <input id="add_row" type="button" value="Добавить блюдо" class="btn btn-primary mr-3">
+                </div>                
                 <div class="line"></div>
                 <div class="form-group row">
                     <div class="col-lg-12">
-                        <a href="/menu/{{created_at|date:'Y-m-d'}}/delete/" class="btn btn-secondary mr-3">Удалить все меню</a>
+                        <a href="/menu/{{object.pk}}/delete/" class="btn btn-secondary mr-3">Удалить меню</a>
                         <input type="submit" value="Сохранить" class="btn btn-primary mr-3" name="_save">
-                        <a href="/menu/{{created_at|date:'Y-m-d'}}/copytotomorrow/" class="btn btn-secondary mr-3">Скопировать на завтра</a>
-                        <a href="/menu/{{created_at|date:'Y-m-d'}}/copytomonth/" class="btn btn-secondary mr-3">Скопировать до конца месяца</a>
+                       <!-- <a href="/menu/{{created_at|date:'Y-m-d'}}/copytotomorrow/" class="btn btn-secondary mr-3">Скопировать на завтра</a>
+                        <a href="/menu/{{created_at|date:'Y-m-d'}}/copytomonth/" class="btn btn-secondary mr-3">Скопировать до конца месяца</a> -->
                     </div>
                 </div>              
             </div>
         </div>
     </form>
-    {% include 'includes/js_action_for_elements.html' with dom_element="forms" focus_column="4"%}
+    {% include 'includes/js_action_for_elements.html' with dom_element="items" focus_column="5"%}
 {% endblock content %}

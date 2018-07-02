@@ -126,14 +126,14 @@
                 {% include 'includes/list_messages.html' %}
                 <div class="form-group row">
                     <div class="col-lg-5 offset-lg-2">
-                        <a href="/invoice/{{object.pk}}/delete/" class="btn btn-secondary mr-3">Delete</a>
+                        <a href="/invoice/{{object.pk}}/delete/" class="btn btn-secondary mr-3">Удалить</a>
                         <input type="submit" value="Сохранить" class="btn btn-primary mr-3" name="_save">
                     </div>
                 </div>
             </div>
         </div>
     </form>
-    {% include 'includes/js_action_for_elements.html' with dom_element="items" focus_column="3"%}
+    {% include 'includes/js_action_for_elements.html' with dom_element="items" focus_column="4"%}
 
 <!-- Modal -->
 <div class="modal fade" id="productModalCenter" tabindex="-1" role="dialog" aria-labelledby="productModalCenterTitle" aria-hidden="true">

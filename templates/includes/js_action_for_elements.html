@@ -6,13 +6,14 @@
 
     let apend_row = function (event){
 
-        //let created_at = $('#created_at').val();
+        let created_at = $('#created_at').val();
         let tbody = $('table>tbody');
         let trs = tbody.find('tr');
         count_rows =trs.length;
-        let str_tr = '<tr><input type="hidden" name="{{dom_element}}-0-id" value="" id="id_{{dom_element}}-0-id">'
+        let str_tr = '<tr><input type="hidden" name="{{dom_element}}-0-id" value="" id="id_{{dom_element}}-0-id">\
+                          <input type="hidden" name="{{dom_element}}-0-created_at" id="id_{{dom_element}}-0-created_at" value="%created_at%">'
                         .replace(/{{dom_element}}-\d+-/g,'{{dom_element}}-'+count_rows+'-')
-                        //.replace(/%created_at/g,created_at)
+                        .replace(/%created_at%/g,created_at)
         let tds =tbody.find('tr:last-child td');
         $.each( tds, function(index, item){
             curent_html = $(item).html()
@@ -39,6 +40,7 @@
 
         $(this).parents('tr').css('display','none').attr('hidden','true');
         $(this).parents('td').find('input[type="checkbox"]').attr('checked', true);
+        $('#id_items-TOTAL_FORMS').val($('#id_items-TOTAL_FORMS').val()-1);
         $('#id_form-TOTAL_FORMS').val($('#id_form-TOTAL_FORMS').val()-1);
         
         let tbody = $('table>tbody');
@@ -64,10 +66,14 @@
 
     $('table').on('change','select',function(){        
         let id = $(this).find('option:selected').val();
+        let created_at = $('#created_at').val();
         let this_ = this
-        $.post( "/json/yield_dish/"+id+'/{{csrf_token}}', function( data ) {
-            $(this_).parent('td').next().find('input').val(data.out);
+        $.post( "/json/yield_dish/"+id+"/{{csrf_token}}", function( data ) {
+            $(this_).parents('td').next().find('input').val(data.out);
         });
+        $.post( "/json/product/price/"+id+"/"+created_at+"/{{csrf_token}}", function( data ) {
+            $(this_).parents('td').next().next().next().find('input').val(data.price);
+        });        
     })
     
     $("form").validate({

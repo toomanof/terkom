@@ -1,6 +1,6 @@
 from django.conf.urls import url
-from .views.views_menu import MenuCalendarView, MenuView
-from .views.views_menu import delete_menu, copy_menu
+from .views.views_menu import MenuCalendarView, MenuView, MenuDeleteView
+from .views.views_menu import copy_menu, get_menu
 from .views.views import DishCreateView, DishView, DeleteDishView, DishsView
 from .views.views_map import MapCreateView, MapView, MapsView, DeleteMapView
 from .views.views_map import yield_dish, map_copy
@@ -13,6 +13,7 @@ from .views.views import DeleteContractorView
 from .views.views_reports import CalculationView, CalculationPdfView
 from .views.views_reports import ReportProductAccounting
 from .views.views import redirect_to, create_dish, create_product
+from .views.views import get_invoice_out, get_curent_price_product
 from .views.views import update_products
 from .views.views_invoice import InvoiceView, InvoicesView, InvoiceCreateView
 from .views.views_invoice import InvoiceDeleteView
@@ -43,6 +44,11 @@ urlpatterns = [
     url(r'^calculations/?$',
         CalculationView.as_view(), name='calculations'),
 
+
+    url(r'^invoices_consumption/(?P<year>\d{4})[.-]{1}'
+        '(?P<month>\d{2})[.-]{1}(?P<day>\d{2})'
+        '\/(?P<childrens>\d{1,3})$',
+        get_invoice_out , name='get_invoice_out'),
 
     url(r'^invoices/arrival/?$',
         InvoicesView.as_view(motion=ARRIVAL),
@@ -120,13 +126,12 @@ urlpatterns = [
     url(r'^menus/?$', MenuCalendarView.as_view(), name='menu-list'),
 
     url(r'^menu/(?P<year>\d{4})[.-]{1}(?P<month>\d{2})[.-]{1}(?P<day>\d{2})'
-        '/create', MenuView.as_view(), {'create': True}, name='menus-new'),
+        '/create', get_menu, name='menus-new'),
 
-    url(r'^menu/(?P<year>\d{4})[.-]{1}(?P<month>\d{2})[.-]{1}(?P<day>\d{2})'
-        '/update', MenuView.as_view(), name='menu-update'),
+    url(r'^menu/(?P<pk>\d+)/update', MenuView.as_view(), name='menu-update'),
 
-    url(r'^menu/(?P<year>\d{4})[.-]{1}(?P<month>\d{2})[.-]{1}(?P<day>\d{2})'
-        '/delete', delete_menu, name='menu-delete'),
+    url(r'^menu/(?P<pk>\d+)/delete', MenuDeleteView.as_view(),
+        name='menu-delete'),
 
     url(r'^menu/(?P<year>\d{4})[.-]{1}(?P<month>\d{2})[.-]{1}(?P<day>\d{2})/' +
         COPY_TO_MONTH + '/?$', copy_menu, {'copy': COPY_TO_MONTH},
@@ -140,5 +145,7 @@ urlpatterns = [
     url(r'^json/create_dish/(?P<name>.*)/(?P<csrfmiddlewaretoken>.+)',
         create_dish, name='create_dish'),
     url(r'^json/product/add/?$', create_product, name='json-product-new'),
-    #url(r'^update_products/?$', update_products, name='jupdate_products'),
+    url(r'^json/product/price/(?P<product_id>\d*)/'
+         '(?P<created_at>\d{4}-\d{2}-\d{2})/(?P<csrfmiddlewaretoken>.+)?$',
+        get_curent_price_product, name='get-curent-price-product')
 ]

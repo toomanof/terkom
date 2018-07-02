@@ -21,8 +21,10 @@ from .views import ActionVew, ListViewFor, DeleteViewMixin
 
 @csrf_exempt
 def yield_dish(request, **kwargs):  
-    dish  = Dish.objects.get(id=int(kwargs['dish']))
-    data = {'out':dish.out if dish else ''}
+    data = {'out':0}
+    dish  = Dish.objects.filter(id=int(kwargs['dish']))
+    if dish:        
+        data = {'out':dish[0].out}
     return JsonResponse(data)
 
 def map_copy(request, **kwargs):

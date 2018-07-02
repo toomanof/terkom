@@ -120,7 +120,11 @@ td.td_all, td.td_one{
 }
 
 .form-inline .form-group{
-    margin-bottom: 1rem !important;
+    margin-bottom: 1rem;
+}
+
+.no-margin{
+    margin: 0 !important;
 }
 
 

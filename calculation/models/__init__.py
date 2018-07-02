@@ -2,6 +2,7 @@ from .map import Map
 from .map import MapItems
 from .unit import Unit
 from .menu import Menu
+from .menu import MenuItems
 from .dish import Dish
 from .people import People
 from .invoice import Invoice

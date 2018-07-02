@@ -26,7 +26,7 @@
                 </div>
                 <div class="card-body">
                     {% block action_buttons %}
-                        <h2>Для создания меню нажмите на необходимый день в календаре.<br> Выделенные дни уже имеют меню.</h2   >
+                        <h2>Для создания меню нажмите на нижнюю часть необходимого дня в календаре.<br> Выделенные дни уже имеют меню.</h2   >
                     {% endblock action_buttons %}
                     <div class="line"></div>                  
                     <div id='calendar'></div>
@@ -45,14 +45,15 @@
         }
 
         let var_events=[]
+
             {% for item in dates_menu %}
-                {% for key, val in item.items %}
-                    event ={title: 'Меню на весь день',
-                            start:'{{val|date:"Y-m-d"}}'
+
+                    event ={title: '{{item.food_intake}} {{item.created_at|date:"d.m.Y"}}',
+                            start:'{{item.created_at|date:"Y-m-d"}}',
+                            id: '{{item.id}}'
                             }
 
                     var_events.push(event)
-                {%endfor%}
             {% endfor %}
 
           let calendar = $('#calendar').fullCalendar({
@@ -62,7 +63,7 @@
             defaultview:'changeView',
             eventClick:function(calEvent, jsEvent, view){
                 has_jump = true
-                location.href= '/menu/'+String(calEvent.start._i)+'/update';
+                location.href= '/menu/'+calEvent.id+'/update';
             },
             dayRender: function (date,cell) {
                 if(date_in_events(moment(date,'yyy-mm-dd').format('YYYY-MM-DD'), var_events))
@@ -72,9 +73,7 @@
 
           $(calendar).on('click',function(event){
             if (has_jump != true){
-                if('has_menu' in event.target.attributes){
-                    location.href= '/menu/'+$(event.target).attr('data-date')+'/update';
-                } else if(!('data-date' in event.target.attributes)){
+                if(!('data-date' in event.target.attributes)){
                         location.href = '/menu/'+$(event.originalEvent.path[5].children[0].children[0].children[0].children[0].children[event.target.cellIndex]).attr('data-date')+'/create';
                     }
                     else{

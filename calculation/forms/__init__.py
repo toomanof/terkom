@@ -7,4 +7,5 @@ from .product_form import ProductForm
 from .invoice_form import InvoiceForm
 from .invoice_form import InvoiceItemsForm
 from .invoice_form import InvoiceItemsFormSet
-from .menu_form import MenuFormSet
+from .menu_form import MenuForm
+from .menu_form import MenuItemsForm, MenuItemsFormSet

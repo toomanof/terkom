@@ -1,9 +1,9 @@
-<table id="table_data" class="table_data table table-report table-hover">
+<table id="table_data" class="table table-striped table-sm table-report">
   <thead>
     <tr>
       <th rowspan="2" style="width:20%"></th>
       {% for product in products %}
-        <th class="td_product" colspan="2">{{product}}</th>
+        <th class="td_product" colspan="2">{{product.name}}</th>
       {% endfor %}
     </tr>
     <tr>
@@ -14,16 +14,22 @@
     </tr>                          
   </thead>
   <tbody>
-  {% for item_dish in calculation_day %}
-    <tr>
-      <td class="dish">
-        {{item_dish.dish}}
-      </td>
-      {% for val in item_dish.ingredients %}
-        <td  class="td_one">{% if val.netto_one > 0 %}{{val.netto_one|floatformat:2 }}{% endif %}</td>
-        <td  class="td_all">{% if val.netto_all > 0 %}{{val.netto_all|floatformat:2 }}{% endif %}</td>
-      {% endfor %}
-    </tr>                          
+  {% for item_dish in calculation_day %}    
+      <tr>
+        {% if item_dish.dish %}
+          <td class="dish">
+            {{item_dish.dish}}
+          </td>
+          {% for val in item_dish.cols %}
+            <td  class="td_one">{% if val.netto_one > 0 %}{{val.netto_one|floatformat:2 }}{% endif %}</td>
+            <td  class="td_all">{% if val.netto_all > 0 %}{{val.netto_all|floatformat:2 }}{% endif %}</td>
+          {% endfor %}
+        {% else %}
+          <td class="food_intake" colspan="{{count_ingridients}}">
+            {{item_dish.food_intake}}
+          </td>
+        {% endif %}        
+      </tr>
   {% endfor %}                          
   </tbody>
 </table>

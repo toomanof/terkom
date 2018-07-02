@@ -34,5 +34,20 @@ def get_max(A):
     print(''.join(A))
 
 
+def sort_on_format():
+    import string
+    A = ['D', 'B', 'A', 'C', 'F', 'G']
+    D = [{'i': 'B', 'old': True},
+         {'i': 'C', 'old': True},
+         {'i': 'E', 'old': True},
+         {'i': 'D', 'old': True},
+         {'i': 'F', 'old': True}]
+    print(D)
+
+
+def new_fun(**vars):
+    print(vars)
+
+
 if __name__ == "__main__":
-    bubble_sort(str_list)
+    new_fun( m='sdsd')

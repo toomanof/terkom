@@ -47,15 +47,21 @@ def delete(invoce):
     RegPrice.objects.filter(invoce_id=invoce.id).delete()
 
 
-def get_current_price(dish, find_date=None):
-    logging.error(dish.id)
+def get_current_price(dish_id, find_date=None):
     if find_date is None:
         find_date = date(datetime.today())
-    result = RegPrice.objects.filter(dish_id=dish.id,
+    result = RegPrice.objects.filter(dish_id=dish_id,
                                      created_at__lte=find_date).\
                               order_by('-created_at')
     return result[0].price if result else 0
 
+def get_current_price_product(product_id, find_date=None):
+    if find_date is None:
+        find_date = date(datetime.today())
+    result = RegPrice.objects.filter(product_id=product_id,
+                                     created_at__lte=find_date).\
+                              order_by('-created_at')
+    return result[0].price if result else 0
 
 def dictfetchall(cursor):
     '''Returns all rows from a cursor as a dict'''
