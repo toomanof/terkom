@@ -10,7 +10,7 @@ from django.conf import settings
 def fetch_pdf_resources(uri, rel):
 
     if settings.STATIC_URL and uri.startswith(settings.STATIC_URL):
-        path = os.path.join(settings.STATICFILES_DIRS[0], "")
+        path = os.path.join(settings.STATIC_ROOT, "")
         print(path)
         return path
     elif settings.MEDIA_URL and uri.startswith(settings.MEDIA_URL):
@@ -19,7 +19,7 @@ def fetch_pdf_resources(uri, rel):
                             uri.replace(settings.MEDIA_URL, ""))
     else:
         print('3sd')
-        path = os.path.join(settings.STATICFILES_DIRS[0], "fonts", uri)
+        path = os.path.join(settings.STATIC_ROOT, "fonts", uri)
 
     print(path)
     return path

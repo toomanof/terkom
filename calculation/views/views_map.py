@@ -1,8 +1,6 @@
 import logging
-
+from django.db import IntegrityError
 from django.http import JsonResponse
-
-
 from django.contrib import messages 
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
@@ -10,7 +8,6 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from django.views.decorators.csrf import csrf_exempt
-
 
 from django.urls import reverse_lazy
 
@@ -77,7 +74,10 @@ class MapCreateView(ActionVew, CreateView):
         form = self.get_form(form_class)
         rows = MapItemsFormSet(self.request.POST)
         if form.is_valid() and rows.is_valid():
-            return self.form_valid(form, rows)
+            try:
+                return self.form_valid(form, rows)
+            except IntegrityError:
+                pass
         return self.form_invalid(form, rows)
 
     def form_valid(self, form, rows):
@@ -122,7 +122,7 @@ class MapView(ActionVew, UpdateView):
         return self.form_invalid(form, rows)
 
     def form_valid(self, form, rows):
-        self.object = form.save()
+        #self.object = form.save()
         rows.instance = self.object
         rows.save()
         fs_not_save = rows.save(commit=False)

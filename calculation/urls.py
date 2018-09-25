@@ -11,6 +11,7 @@ from .views.views import DeletePeopleView
 from .views.views import ContractorCreateView, ContractorView, ContractorsView
 from .views.views import DeleteContractorView
 from .views.views_reports import CalculationView, CalculationPdfView
+from .views.views_reports import InvoicePdfView
 from .views.views_reports import ReportProductAccounting
 from .views.views import redirect_to, create_dish, create_product
 from .views.views import get_invoice_out, get_curent_price_product
@@ -69,6 +70,10 @@ urlpatterns = [
     url(r'^invoice/add\/?$',
         InvoiceCreateView.as_view(),
         name='invoice-new'),
+
+    url(r'^invoice/(?P<pk>\d+)/pdf/?$',
+        InvoicePdfView.as_view(),
+        name='invoice-pdf'),
 
 
     url(r'^dishs/?$', DishsView.as_view(), name='dish-list'),

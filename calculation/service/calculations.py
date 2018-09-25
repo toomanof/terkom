@@ -1,5 +1,4 @@
 import logging
-import pprint
 
 from django.db.models import Max
 
@@ -19,7 +18,6 @@ def get_report_calculation_of_day(day, qty_children):
         Возращает Матрицу меню и список продуктов задействованных
         в меню.
     '''
-
     keys_col_table = ('product', 'netto_all', 'netto_one','product_id')
     keys_ingr = ('product_id', 'product__name',
                  'product__tech_map', 'brutto',)
@@ -92,7 +90,7 @@ def get_report_calculation_of_day(day, qty_children):
                                      'dish__name', 'dish__tech_map',
                                      'dish__tech_map__batch_output')
                              .order_by('dish__name'))
-
+        print('dishs',dishs_in_menu)
         for dish_in_menu in dishs_in_menu:
             # Запоминаем значение выхода веса по тех. карте
             # Изменяем ключ на map_out 
@@ -118,10 +116,11 @@ def get_report_calculation_of_day(day, qty_children):
                 # заносим продукт в ингридиенты самого продукта  
                 dish_in_menu['ingredients'].append(
                     dict(zip(keys_ingr,
-                             [dish_in_menu['id'],
+                             [dish_in_menu['dish_id'],
                               dish_in_menu['dish__name'],
                               None,dish_in_menu['out']])))
             
+            #print('dish', dish_in_menu)
             for item in dish_in_menu['ingredients']:
                 for product in products:
                     if product['name'] == item['product__name']:
@@ -129,7 +128,9 @@ def get_report_calculation_of_day(day, qty_children):
                 else:
                     products.append({'name': item['product__name'],
                                      'id': item['product_id']})
-            sort_ingredients(products,'name')        
+            sort_ingredients(products,'name') 
+            print('products',)
+            print(products)
         food_intake_menu['dishs'] = dishs_in_menu
         menu_list_with.append(food_intake_menu)
     # Собрали сведения для расчета теперь давай расчитвать
@@ -174,7 +175,7 @@ def get_report_calculation_of_day(day, qty_children):
          for product in products]
     append_table(row=row_weight)
     # Приводятся к типу матрицы цены продуктов действующие
-    # на день калкуляции
+    # на день калкуляции    
     row_price = {'dish': 'Цена, руб:', 'id_row':'price'}
     row_price['cols'] = [dict(zip(keys_col_table,
                                          (product['name'],
@@ -253,10 +254,7 @@ def get_invoice_out(day, qty_children):
                                           max_id + len(new_data) + 1))        
         # Объединяем данные с репорта с новыми id-шниками
         products =list(zip(new_data, new_invoice_items_id))
-
-        logging.error(products)
         for item in products:
-            logging.error(item)
             product = Product.objects.filter(name=item[0]['product'])
             if not product.exists():
                 products.remove(item)

@@ -9,12 +9,20 @@ from django.conf import settings
 from django.views.generic import View
 from django.views.generic import TemplateView
 from django.utils import dateformat
+from django.shortcuts import get_object_or_404
 
-
+from ..models import Invoice
 from ..service.calculations import get_report_calculation_of_day
 from ..service.calculations import get_report_product_accounting
 from ..service.render import Render
 
+
+class InvoicePdfView(View):
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+        context['invoice'] = get_object_or_404(Invoice, pk=kwargs['pk'])
+        return Render.render('reports/report_invoice.html', context)
 
 class CalculationPdfView(View):
 

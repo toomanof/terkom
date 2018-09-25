@@ -56,7 +56,7 @@ class InvoiceView(ActionVew, UpdateView):
         return self.form_invalid(form, rows)
 
     def form_valid(self, form, rows):
-        self.object = form.save()
+        #self.object = form.save()
         rows.instance = self.object
         fs_not_save = rows.save(commit=False)
         for obj in rows.deleted_objects:
@@ -74,8 +74,9 @@ class InvoiceView(ActionVew, UpdateView):
         return super(self.__class__, self).form_invalid(form)
 
     def get_success_url(self, **kwargs):
-        if self.model.motion ==ARRIVAL:
-            return reverse_lazy('invoices-arrival-list')
+        inv = self.get_object()
+        if inv.motion == ARRIVAL:
+            return reverse_lazy('invoices-arrival-list')            
         else:
             return reverse_lazy('invoices-consumption-list')
 
@@ -108,7 +109,7 @@ class InvoiceCreateView(ActionVew, CreateView):
         return self.form_invalid(form, rows)
 
     def form_valid(self, form, rows):
-        logging.error(form)
+        #logging.error(form)
         self.object = form.save()
         rows.instance = self.object
         fs_not_save = rows.save(commit=False)
@@ -126,14 +127,17 @@ class InvoiceCreateView(ActionVew, CreateView):
         return super(self.__class__, self).form_invalid(form)
 
     def get_success_url(self, **kwargs):
-        if self.model.motion ==ARRIVAL:
-            return reverse_lazy('invoices-arrival-list')
-        else:
-            return reverse_lazy('invoices-consumption-list')
+        return reverse_lazy('invoices-arrival-list')
 
 
 class InvoiceDeleteView(DeleteViewMixin, DeleteView):
 
     model = Invoice
-    success_url = reverse_lazy('invoices-arrival-list')
     template_name = 'confirm_delete.html'
+    
+    def get_success_url(self, **kwargs):
+        inv = self.get_object()
+        if inv.motion == ARRIVAL:
+            return reverse_lazy('invoices-arrival-list')            
+        else:
+            return reverse_lazy('invoices-consumption-list')

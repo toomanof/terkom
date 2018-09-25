@@ -47,7 +47,7 @@ class Map(Model):
     def brutto(self):
         return self.items.aggregate(sum=Sum('brutto'))['sum']
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):        
         self.name = self.name.capitalize()
         super(Map, self).save(*args, **kwargs)
         dish = Dish.objects.filter(tech_map=self)
@@ -85,7 +85,6 @@ class Map(Model):
         verbose_name = 'Технологическая карта'
         verbose_name_plural = 'Технологические карты'
         ordering = ['name']
-        unique_together = ('name',)
 
 
 class MapItems(Model):

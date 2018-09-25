@@ -1,0 +1,72 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>  
+	    <title>{% block title %}{% trans "Terkom 'Antratsit'" %}{% endblock %}</title>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">  
+		{% block style %}
+		    <style type="text/css">
+				@font-face {font-family: "Roboto"; src: url(Roboto/Roboto-Regular.ttf);}
+				@font-face {font-family: "Roboto"; src: url(Roboto/Roboto-Bold.ttf);font-weight: bold;}
+				@font-face {font-family: "Roboto"; src: url(Roboto/Roboto-Italic.ttf);font-style: italic;}
+				@font-face {font-family: "Roboto"; src: url(Roboto/Roboto-BoldItalic.ttf);font-weight: bold;font-style: italic;}
+
+		        @page {
+		            size: A4;
+		            margin: 0.5cm; 
+					@frame footer {
+	                    -pdf-frame-content: footerContent;
+	                    bottom: 0cm;
+	                    margin-left: 9cm;
+	                    margin-right: 9cm;
+	                    height: 1cm;
+	                }
+		        }
+			    body {font-family: "Roboto", sans-serif;}
+			    td,th{border: 1px solid #eceeef;}
+			    th{ font-weight: normal; padding-bottom: 1px;padding-top:3px;background-color: #effff3;}
+				td {padding-bottom: 2px;padding-left:2rem;padding-top:2px;}
+				.dish{text-align:left; font-weight:600;	}
+				.td_one, .td_all{text-align: right;}
+				.food_intake{font-weight: bold; background-color: #FFF; text-align: center;}
+		    </style>  
+		{% endblock style %}
+	</head>
+	<body>
+		<div style="font-weight:600; font-size:14px; text-align: center;"> Наименование организации: ДОУ"Лесные просторы"</div>
+		<div style="right;font-weight:600; font-size:14px; text-align: center;">Накладная № {{invoice.number}} от {{invoice.created_at}}</div>
+		<div>Отпущено со клада: {{invoice.delivered}}</div>
+		<div>Через: {{invoice.adopted}}</div>
+		<table>
+			<thead>
+				<tr>
+					<th style="width:4%;font-weight:600;">№ пп</th>
+					<th style="width:50%;right;font-weight:600;">Наименование</th>
+					<th style="width: 7%; font-weight:600;">ед. изм.</th>
+					<th style="width: 12%;font-weight:600;">Количество</th>
+					<th style="width: 12%;font-weight:600;">Цена</th>
+					<th style="width: 12%;font-weight:600;">Сумма</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in invoice.rows %}
+					<tr>
+						<td style="padding-top:2px; padding-bottom:0; width:4%; text-align:center;">{{forloop.counter}}</td>
+						<td style="width:50%; padding-top:2px; padding-bottom:0; padding-left:2px">{{item.product}}</td>
+						<td style="padding-top:2px; padding-bottom:0; width: 7%; text-align:center;">{{item.product.unit}}</td>
+						<td style="width:12%; padding-top:2px; padding-bottom:0; padding-right:2px;text-align: right;">{{item.qty|floatformat:3}}</td>
+						<td style="width: 12%; padding-top:2px; padding-bottom:0; padding-right:2px;text-align: right;">{{item.price|floatformat:2}}</td>
+						<td style="width: 12%;padding-top:2px; padding-bottom:0; padding-right:2px;text-align: right;">{{item.summa|floatformat:2}}</td>
+					</tr>
+				{% endfor %}
+				<tr>
+					<td colspan="5" style="padding-left:2px;font-weight:600;background-color: #effff3;">Итого:</td>
+					<td style="padding-right:2px;text-align: right;font-weight:600;background-color: #effff3;">{{invoice.total|floatformat:2}}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+</html>

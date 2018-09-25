@@ -28,13 +28,13 @@ urlpatterns = [
     url(r'^', include('calculation.urls')),
 ]
 #urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-if settings.DEBUG == True:
-    #urlpatterns += staticfiles_urlpatterns()
+urlpatterns += [url(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
+                url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT})]
+                
+if settings.DEBUG:
+    urlpatterns += staticfiles_urlpatterns()
     import debug_toolbar    
     urlpatterns += [
-                    url(r'^__debug__/', include(debug_toolbar.urls)),
-                    url(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
-                    url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT})]
+                    url(r'^__debug__/', include(debug_toolbar.urls))]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

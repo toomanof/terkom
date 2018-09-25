@@ -1,46 +1,82 @@
 import logging
+from django.db import connection
 from datetime import date, datetime
 from ..models.reg_price import RegPrice
 from ..models.registration import Registration
+from ..constants import ARRIVAL, EXPENSE
 
 
-def post(invoce):
 
-    #Registration.objects.filter(invoce_id=invoce.id).delete()
-    #RegPrice.objects.filter(invoce_id=invoce.id).delete()
+def posting(invoce):
 
+    registr = Registration.objects.filter(invoce=invoce)
+    if registr:
+        registr.delete()
+
+    reg_price = RegPrice.objects.filter(invoce=invoce) 
+
+    if reg_price:
+            reg_price.delete()
+
+    metka = invoce
     for item in invoce.items.all():
         summa = round(float(item.qty) * float(item.price), 2)
-        registr = Registration.objects.filter(invoce=invoce,
-                                              product=item.product,
-                                              motion=invoce.motion)
-        if not registr:
-            registr = Registration(invoce=invoce,
-                                   from_of=invoce.contractor,
-                                   product=item.product,
-                                   qty=item.qty,
-                                   summa=summa, motion=invoce.motion,
-                                   created_at=invoce.created_at)
-            registr.save()
-        else:
-            registr.update(from_of=invoce.contractor,
-                           created_at=invoce.created_at,
-                           qty=item.qty, summa=summa)
+        if invoce.motion == EXPENSE:
+            metka = get_metka_product_qt_0('product', item.product.id)
 
-        reg_price = RegPrice.objects.filter(product=item.product,
-                                            invoce=invoce)
-        if not reg_price:
+        qty = item.qty if invoce.motion == ARRIVAL else  item.qty * -1
+        registr = Registration(invoce=invoce,
+                               metka=metka,
+                               from_of=invoce.contractor,
+                               product=item.product,
+                               dish=item.product.dish,
+                               qty=qty,
+                               summa=summa, motion=invoce.motion,
+                               created_at=invoce.created_at)
+        registr.save()
+
+        if invoce.motion == ARRIVAL:
             reg_price = RegPrice(created_at=invoce.created_at,
                                  product=item.product,
                                  dish=item.product.dish,
                                  price=item.price,
                                  invoce=invoce)
             reg_price.save()
-        else:
-            reg_price.update(dish=item.product.dish,
-                             price=item.price,
-                             created_at=invoce.created_at)
 
+def get_metka_product_qt_0(type_object, product):
+    sql ='SELECT SUM(qty), metka_id\
+          FROM calculation_registration\
+          WHERE {}_id =%s\
+          GROUP BY metka_id\
+          ORDER BY created_at'.format(type_object)
+    cursor = connection.cursor()
+    cursor.execute(sql, [product])
+    rows = cursor.fetchall()
+
+    for row in rows:
+        if row[0]>0:
+            return row[1]
+    return None
+
+def get_first_product_price(object_id, type_object, find_date=None):
+    invoice_id = get_metka_product_qt_0(type_object, object_id)
+    if invoice_id:
+        if find_date is None:
+            find_date = date(datetime.today())
+        sql = 'SELECT crp.price\
+               FROM calculation_registration cr\
+               LEFT JOIN calculation_regprice crp\
+               ON cr.product_id = crp.product_id\
+               AND cr.invoce_id = crp.invoce_id\
+               WHERE crp.{}_id =%s AND cr.invoce_id={}\
+               AND cr.created_at <= %s\
+               ORDER BY cr.created_at LIMIT 1'.format(type_object, invoice_id)
+        cursor = connection.cursor()
+        cursor.execute(sql, [object_id,find_date])
+        row = cursor.fetchone()
+        return row[0] if row else 0
+    else:
+        return 0
 
 def delete(invoce):
     Registration.objects.filter(invoce_id=invoce.id).delete()
@@ -48,20 +84,10 @@ def delete(invoce):
 
 
 def get_current_price(dish_id, find_date=None):
-    if find_date is None:
-        find_date = date(datetime.today())
-    result = RegPrice.objects.filter(dish_id=dish_id,
-                                     created_at__lte=find_date).\
-                              order_by('-created_at')
-    return result[0].price if result else 0
+    return get_first_product_price(dish_id,'dish', find_date)
 
 def get_current_price_product(product_id, find_date=None):
-    if find_date is None:
-        find_date = date(datetime.today())
-    result = RegPrice.objects.filter(product_id=product_id,
-                                     created_at__lte=find_date).\
-                              order_by('-created_at')
-    return result[0].price if result else 0
+    return get_first_product_price(dish_id,'product', find_date)
 
 def dictfetchall(cursor):
     '''Returns all rows from a cursor as a dict'''

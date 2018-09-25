@@ -103,7 +103,7 @@ class MenuView(ActionVew, UpdateView):
         return self.form_invalid(form, rows)
 
     def form_valid(self, form, rows):
-        self.object = form.save()
+        #self.object = form.save()
         rows.instance = self.object
         fs_not_save = rows.save(commit=False)
         for obj in rows.deleted_objects:

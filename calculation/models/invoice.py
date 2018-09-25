@@ -13,8 +13,8 @@ from django.db.models import DecimalField
 from django.db.models import DateField
 from django.db.models import PositiveIntegerField
 from django.db.models import SmallIntegerField
-from calculation.service.helpers import dictfetchall, post, delete
-from calculation.constants import ARRIVAL, TYPE_CHOICES
+from calculation.service.helpers import dictfetchall, posting, delete
+from calculation.constants import ARRIVAL, EXPENSE, TYPE_CHOICES
 
 
 class Invoice(Model):
@@ -38,14 +38,15 @@ class Invoice(Model):
         self.created_at = datetime.datetime.now()
         super(Invoice, self).__init__(*args, **kwargs)
 
+    def __str__(self):
+        return 'Накладная {} от {} {}'.format(self.number, self.created_at, TYPE_CHOICES[self.motion -1])
+
     def save(self, *args, **kwargs):
         super(Invoice, self).save(*args, **kwargs)
-        if self.motion == ARRIVAL:
-            post(self)
+        posting(self)
 
     def delete(self, *args, **kwargs):
-        if self.motion == ARRIVAL:
-            delete(self)
+        delete(self)
         super(self.__class__, self).delete(*args, **kwargs)
 
     @property
@@ -64,8 +65,6 @@ class Invoice(Model):
     def get_absolute_url(self):
         return reverse('invoice-update', kwargs={'pk': self.pk})
 
-    def get_success_url(self):
-        return reverse_lazy('invoices-arrival-list')
 
     class Meta:
         app_label = 'calculation'

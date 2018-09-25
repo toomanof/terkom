@@ -14,7 +14,7 @@ import os
 from os.path import abspath, join, dirname
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = abspath(join(dirname(abspath(__file__)), '..'))
 
 
@@ -25,7 +25,7 @@ BASE_DIR = abspath(join(dirname(abspath(__file__)), '..'))
 SECRET_KEY = 'o^b+q56l)i#pnyor5#=luurmf9u4npm8q_w+(6xea7l%sf97rd'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -123,12 +123,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
-if not DEBUG:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-    STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/node_modules/'),)
-else:
-    STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),
-                        os.path.join(BASE_DIR, 'static/node_modules/'),)
+#STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),
+#                    os.path.join(BASE_DIR, 'static/node_modules/'),)
+
+#if not DEBUG:
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -161,8 +160,11 @@ DEBUG_TOOLBAR_CONFIG = {
 INTERNAL_IPS = ('127.0.0.1',
                 '172.16.1.13',
                 '192.168.86.1',
+                '192.168.90.1',
                 '172.16.13.13',
-                '172.16.0.3')
+                '172.16.0.3',
+                '194.125.224.111',
+                '192.168.82.215')
 
 DATE_INPUT_FORMATS = ['%d-%m-%Y']
 
