@@ -21,8 +21,8 @@
             {{item_dish.dish}}
           </td>
           {% for val in item_dish.cols %}
-            <td  class="td_one">{% if val.netto_one > 0 %}{{val.netto_one|floatformat:2 }}{% endif %}</td>
-            <td  class="td_all">{% if val.netto_all > 0 %}{{val.netto_all|floatformat:2 }}{% endif %}</td>
+            <td  class="td_one">{% if val.netto_one > 0 %}{{val.netto_one|floatformat:3 }}{% endif %}</td>
+            <td  class="td_all">{% if val.netto_all > 0 %}{{val.netto_all|floatformat:3 }}{% endif %}</td>
           {% endfor %}
         {% else %}
           <td class="food_intake" colspan="{{count_ingridients}}">

@@ -26,7 +26,6 @@ class RegPrice(Model):
         verbose_name = 'Запись регистра "Цены"'
         verbose_name_plural = 'Регистр "Цены"'
         ordering = ['product', 'created_at']
-        unique_together = (('product', 'invoce'),)
 
 
 @admin.register(RegPrice)

@@ -41,7 +41,6 @@ class Dish(Model):
         verbose_name = 'Блюдо'
         verbose_name_plural = 'Блюда'
         ordering = ['name']
-        unique_together = ('name',)
 
 @admin.register(Dish)
 class DishAdmin(admin.ModelAdmin):

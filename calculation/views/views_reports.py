@@ -14,7 +14,9 @@ from django.shortcuts import get_object_or_404
 from ..models import Invoice
 from ..service.calculations import get_report_calculation_of_day
 from ..service.calculations import get_report_product_accounting
+from ..service.calculations import save_report_to_excel
 from ..service.render import Render
+
 
 
 class InvoicePdfView(View):
@@ -23,6 +25,21 @@ class InvoicePdfView(View):
         context = {}
         context['invoice'] = get_object_or_404(Invoice, pk=kwargs['pk'])
         return Render.render('reports/report_invoice.html', context)
+
+class CalculationXlsView(View):
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+        if(kwargs):
+            date_now = date(int(kwargs['year']),
+                            int(kwargs['month']),
+                            int(kwargs['day']))
+            return save_report_to_excel(date_now, int(kwargs['childrens']))
+        else:
+            context['date_now'] = datetime.now().date()
+            context['childrens'] = 250
+            return Render.render('reports/report_calculation.html', context)
+
 
 class CalculationPdfView(View):
 

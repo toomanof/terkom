@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.0/howto/deployment/wsgi/
 
 import os
 import sys
-sys.path.append('/var/www/developments/terkom')
+sys.path.append('/var/www/production/terkom')
 
 from django.core.wsgi import get_wsgi_application
 

@@ -8,16 +8,6 @@ from ..constants import ARRIVAL, EXPENSE
 
 
 def posting(invoce):
-
-    registr = Registration.objects.filter(invoce=invoce)
-    if registr:
-        registr.delete()
-
-    reg_price = RegPrice.objects.filter(invoce=invoce) 
-
-    if reg_price:
-            reg_price.delete()
-
     metka = invoce
     for item in invoce.items.all():
         summa = round(float(item.qty) * float(item.price), 2)
@@ -25,22 +15,32 @@ def posting(invoce):
             metka = get_metka_product_qt_0('product', item.product.id)
 
         qty = item.qty if invoce.motion == ARRIVAL else  item.qty * -1
-        registr = Registration(invoce=invoce,
-                               metka=metka,
-                               from_of=invoce.contractor,
-                               product=item.product,
-                               dish=item.product.dish,
-                               qty=qty,
-                               summa=summa, motion=invoce.motion,
-                               created_at=invoce.created_at)
+        registr, created = Registration.objects.get_or_create(
+            invoce=invoce,
+            product=item.product,
+            defaults = {
+                        'metka':metka,
+                        'from_of':invoce.contractor,
+                        'dish':item.product.dish,
+                        'qty':qty,
+                        'summa':summa,
+                        'motion':invoce.motion,
+                        'created_at':invoce.created_at}
+        )
+
+        if created:
+          registr.delete()
         registr.save()
 
         if invoce.motion == ARRIVAL:
-            reg_price = RegPrice(created_at=invoce.created_at,
-                                 product=item.product,
-                                 dish=item.product.dish,
-                                 price=item.price,
-                                 invoce=invoce)
+            reg_price, created  = RegPrice.objects.get_or_create(
+                created_at=invoce.created_at,
+                product=item.product,
+                dish=item.product.dish,
+                price=item.price,
+                invoce=invoce)
+            if created:
+              reg_price.delete()
             reg_price.save()
 
 def get_metka_product_qt_0(type_object, product):

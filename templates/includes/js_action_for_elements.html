@@ -7,7 +7,7 @@
     let apend_row = function (event){
 
         let created_at = $('#created_at').val();
-        let tbody = $('table>tbody');
+        let tbody = $('.table>tbody');
         let trs = tbody.find('tr');
         count_rows =trs.length;
         let str_tr = '<tr><input type="hidden" name="{{dom_element}}-0-id" value="" id="id_{{dom_element}}-0-id">\
@@ -15,6 +15,7 @@
                         .replace(/{{dom_element}}-\d+-/g,'{{dom_element}}-'+count_rows+'-')
                         .replace(/%created_at%/g,created_at)
         let tds =tbody.find('tr:last-child td');
+        console.log(tds)
         $.each( tds, function(index, item){
             curent_html = $(item).html()
             curent_html = curent_html.replace(/{{dom_element}}-\d+-/g,'{{dom_element}}-'+count_rows+'-')

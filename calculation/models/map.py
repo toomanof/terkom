@@ -50,14 +50,12 @@ class Map(Model):
     def save(self, *args, **kwargs):        
         self.name = self.name.capitalize()
         super(Map, self).save(*args, **kwargs)
-        dish = Dish.objects.filter(tech_map=self)
-        if not dish:
-            dish = Dish()
+        if not self.dish.exists():
+            dish = Dish(tech_map=self)
         else:
-            dish = dish[0]
+            dish = self.dish.all()[0]
 
         dish.name = self.name
-        dish.tech_map = self
         dish.out = self.batch_output
         dish.unit = self.unit
         dish.save()
@@ -97,9 +95,9 @@ class MapItems(Model):
                          null=False, blank=True, default=None,
                          on_delete=PROTECT)
 
-    brutto = DecimalField(max_digits=15, decimal_places=2,
+    brutto = DecimalField(max_digits=15, decimal_places=3,
                           default=0, verbose_name='брутто')
-    netto = DecimalField(max_digits=15, decimal_places=2,
+    netto = DecimalField(max_digits=15, decimal_places=3,
                          blank=True, null=True,
                          default=0, verbose_name='неттто')
 

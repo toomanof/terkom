@@ -49,10 +49,11 @@
                                     </tr>
                                 {% endfor %}                    
                             </tbody>
-                        </table>
+                        </table>                    
                     </div>
                 </div>
             </div>
+            {%include 'includes/pagination.html' with url_list='maps'%}
         </div>
     </div>
 {% endblock content %}

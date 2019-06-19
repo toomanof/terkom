@@ -14,7 +14,10 @@
       }
       function createReportPDF(element){
         element.href = '/calculations/' + $('#select_date').val() +'/' + $('#select_childrens').val() +'/pdf';
-      }      
+      } 
+      function createReportXLS(element){
+        element.href = '/calculations/' + $('#select_date').val() +'/' + $('#select_childrens').val() +'/xls';
+      }
       function createInvoice(element){
         element.href = '/invoices_consumption/' + $('#select_date').val() +'/' + $('#select_childrens').val();
       }      
@@ -41,7 +44,8 @@
                       <input type="date" id="select_date" class="col-lg-2 form-control mr-3" value="{{date_now|date:'Y-m-d'}}">
                       <input type="number" id="select_childrens" class="col-lg-2 form-control mr-3" value="{{childrens}}">
                       <a type="button" href="" class="btn-primary form-control mr-3"  onclick="createReport(this)">Создать отчет</a>
-                      <a type="button" href="" class="btn-primary form-control mr-3"  onclick="createReportPDF(this)">Показать отчет в pdf формате</a>                        
+                      <a type="button" href="" class="btn-primary form-control mr-3"  onclick="createReportPDF(this)">Показать отчет в pdf формате</a>
+                      <a type="button" href="" class="btn-primary form-control mr-3"  onclick="createReportXLS(this)">Сохранить отчет в xls формате</a>                      
                       <a type="button" href="" class="btn-primary form-control mr-3"  onclick="createInvoice(this)">Создать накладную</a>                    
                     </div>
                     {% endblock action_buttons %}

@@ -130,12 +130,14 @@ class DishsView(ListViewFor, ListView):
     model = Dish
     paginate_by = 100
     template_name = 'list/dish_list.html'
+    ordering =['name']
 
 
 class DishCreateView(ActionVew, CreateView):
 
     action = 0
     model = Dish
+    success_url = reverse_lazy('dish-list')
     form_class = DishForm
     template_name = 'element/dish.html'
     parent_href = reverse_lazy('dish-list')
@@ -145,6 +147,7 @@ class DishView(ActionVew, UpdateView):
 
     action = 1
     model = Dish
+    success_url = reverse_lazy('dish-list')
     form_class = DishForm
     template_name = 'element/dish.html'
     parent_href = reverse_lazy('dish-list')

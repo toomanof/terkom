@@ -104,7 +104,7 @@ class MapView(ActionVew, UpdateView):
     model = Map
     form_class = MapForm
     template_name = 'element/map.html'
-    success_url = reverse_lazy('map-list')
+    #success_url = reverse_lazy('map-list')
     parent_href = reverse_lazy('map-list')
 
     def get_context_data(self, **kwargs):
@@ -122,18 +122,21 @@ class MapView(ActionVew, UpdateView):
         return self.form_invalid(form, rows)
 
     def form_valid(self, form, rows):
-        #self.object = form.save()
+        self.object = form.save()
+        print('form is valid')
         rows.instance = self.object
         rows.save()
+
         fs_not_save = rows.save(commit=False)
-        for form in fs_not_save:
-            if form.product_id:
-                form.save()
+        for row in fs_not_save:
+            if row.product_id:
+                row.save()
         messages.success(self.request,
                          'Сохранение прошло успешно!')
         return HttpResponseRedirect(self.get_success_url())
     
     def form_invalid(self, form, rows):
+        print('form is invalid')
         for key, val in form.errors.items():
             messages.error(self.request, '{} {}'.format(key,val))
         for error in rows.errors:

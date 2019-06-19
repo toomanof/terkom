@@ -10,7 +10,7 @@ from .views.views import PeopleCreateView, PeopleView, PeoplesView
 from .views.views import DeletePeopleView
 from .views.views import ContractorCreateView, ContractorView, ContractorsView
 from .views.views import DeleteContractorView
-from .views.views_reports import CalculationView, CalculationPdfView
+from .views.views_reports import CalculationView, CalculationPdfView, CalculationXlsView
 from .views.views_reports import InvoicePdfView
 from .views.views_reports import ReportProductAccounting
 from .views.views import redirect_to, create_dish, create_product
@@ -19,6 +19,7 @@ from .views.views import update_products
 from .views.views_invoice import InvoiceView, InvoicesView, InvoiceCreateView
 from .views.views_invoice import InvoiceDeleteView
 from .constants import *
+
 
 
 urlpatterns = [
@@ -42,10 +43,14 @@ urlpatterns = [
         '\/(?P<childrens>\d{1,3})/pdf$',
         CalculationPdfView.as_view(), name='calculations_day_pdf'),
 
+    url(r'^calculations/(?P<year>\d{4})[.-]{1}'
+        '(?P<month>\d{2})[.-]{1}(?P<day>\d{2})'
+        '\/(?P<childrens>\d{1,3})/xls$',
+        CalculationXlsView.as_view(), name='save_report_to_excel'),
+
     url(r'^calculations/?$',
         CalculationView.as_view(), name='calculations'),
-
-
+    
     url(r'^invoices_consumption/(?P<year>\d{4})[.-]{1}'
         '(?P<month>\d{2})[.-]{1}(?P<day>\d{2})'
         '\/(?P<childrens>\d{1,3})$',

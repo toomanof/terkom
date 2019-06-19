@@ -1,11 +1,14 @@
 import logging
 
+from django.http import HttpResponse
 from django.db.models import Max
+import xlwt
 
 from ..models import Menu, MenuItems, Registration, Product
 from ..models import Dish, MapItems, Map, Invoice, InvoiceItems
 from .helpers import get_current_price
 from ..constants import *
+
 
 
 
@@ -52,12 +55,11 @@ def get_report_calculation_of_day(day, qty_children):
             тех. карту, а также все ингридиенты по исходящей в глубь 
         '''
         # Выбираем ингридиенты входящие в тех карту
-        ingredients = list(
-                MapItems.objects
-                    .filter(map_doc_id=tech_map_id)
-                    .select_related('product')
-                    .values(*keys_ingr)
-                    .order_by('product__name'))
+        ingredients = list(MapItems.objects
+                            .filter(map_doc_id=tech_map_id)
+                            .select_related('product')
+                            .values(*keys_ingr)
+                            .order_by('product__name'))
         # Из них выбираем ингридиенты которые сами имеют ингридиенты
         products_with_ingr =list(
             filter(lambda item: item['product__tech_map'] is not None,
@@ -90,21 +92,17 @@ def get_report_calculation_of_day(day, qty_children):
                                      'dish__name', 'dish__tech_map',
                                      'dish__tech_map__batch_output')
                              .order_by('dish__name'))
-        print('dishs',dishs_in_menu)
         for dish_in_menu in dishs_in_menu:
             # Запоминаем значение выхода веса по тех. карте
             # Изменяем ключ на map_out 
-            dish_in_menu['map_out'] =\
-            dish_in_menu.pop('dish__tech_map__batch_output')
+            dish_in_menu['map_out'] = dish_in_menu.pop('dish__tech_map__batch_output')
             # Изменяем тип значение на целое число
-            dish_in_menu['map_out'] =\
-                int(dish_in_menu['map_out'].split(',')[0])\
-                    if dish_in_menu['map_out'] is not None else 0
+            dish_in_menu['map_out'] = int(dish_in_menu['map_out'].split(',')[0])\
+                                       if dish_in_menu['map_out'] is not None else 0
             # Запоминаем значение выхода веса указываем 
             # то, что указано в меню
-            dish_in_menu['out'] =\
-                int(dish_in_menu['out'].split(',')[0])\
-                    if dish_in_menu['out'] is not None else 0
+            dish_in_menu['out'] = int(dish_in_menu['out'].split(',')[0])\
+                                   if dish_in_menu['out'] is not None else 0
             # Вычисляем входящие ингридиенты в блюдо
             if dish_in_menu['dish__tech_map'] is not None:
                 dish_in_menu['ingredients'] =sort_ingredients(
@@ -120,7 +118,6 @@ def get_report_calculation_of_day(day, qty_children):
                               dish_in_menu['dish__name'],
                               None,dish_in_menu['out']])))
             
-            #print('dish', dish_in_menu)
             for item in dish_in_menu['ingredients']:
                 for product in products:
                     if product['name'] == item['product__name']:
@@ -129,8 +126,6 @@ def get_report_calculation_of_day(day, qty_children):
                     products.append({'name': item['product__name'],
                                      'id': item['product_id']})
             sort_ingredients(products,'name') 
-            print('products',)
-            print(products)
         food_intake_menu['dishs'] = dishs_in_menu
         menu_list_with.append(food_intake_menu)
     # Собрали сведения для расчета теперь давай расчитвать
@@ -191,7 +186,7 @@ def get_report_calculation_of_day(day, qty_children):
     for index in range(0, len(price_ingr)):
         d = {keys_col_table[0]: price_ingr[index][keys_col_table[0]],
              keys_col_table[1]: round(float(price_ingr[index][keys_col_table[1]]) *
-                                float(weight_ingr[index][keys_col_table[1]]), 2)}
+                                float(weight_ingr[index][keys_col_table[1]]), 3)}
 
         row_total['cols'].append(d)
         all_total += d[keys_col_table[1]]
@@ -201,6 +196,73 @@ def get_report_calculation_of_day(day, qty_children):
             'all_total': all_total,
             'total_per_child': all_total / qty_children,
             'count_ingridients': (count_ingridients - 1) * 2 +3}
+
+
+def save_report_to_excel(day, qty_children):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="report.xls"'    
+
+    report = get_report_calculation_of_day(day, qty_children)
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Report', cell_overwrite_ok=True)
+
+    xlwt.add_palette_colour("custom_colour", 0x21)
+    wb.set_colour_RGB(0x21, 230, 253, 248)    
+
+    # Формат первой строки
+    style_first = xlwt.easyxf('font: bold on, color black;\
+                     borders: left thin, right thin, top thin, bottom thin;\
+                     pattern: pattern solid, fore_color custom_colour;')
+    style_first.alignment.wrap = 1
+    al = xlwt.Alignment()
+    al.wrap = xlwt.Alignment.WRAP_AT_RIGHT
+    al.vert = xlwt.Alignment.VERT_CENTER
+    al.horz = xlwt.Alignment.HORZ_LEFT
+    style_first.alignment = al
+
+    style = xlwt.easyxf('font: bold on, color black;\
+                     borders: left thin, right thin, top thin, bottom thin;\
+                     pattern: pattern solid, fore_color white;')
+
+    style_val = xlwt.easyxf('font: bold on, color black;\
+                     borders: left thin, right thin, top thin, bottom thin;\
+                     pattern: pattern solid, fore_color white;')    
+    al = xlwt.Alignment()
+    al.vert = xlwt.Alignment.VERT_CENTER
+    al.horz = xlwt.Alignment.HORZ_RIGHT
+    style_val.alignment = al
+
+    col = 1
+    for product in report['products']:
+        print(0, 0, col, col+1)
+        ws.write_merge(0, 0, col, col+1, product['name'], style_first)
+        ws.write(1, col, 'порция', style)
+        ws.write(1, col+1, 'общая', style)
+        col += 2
+
+    ws.row(0).height_mismatch = True
+    ws.row(0).height = 512
+
+    row = 2
+    for item_dish in report['calculation_day']:
+        ws.write(row, 0, item_dish['dish'], style_first)
+        ws.row(row).height_mismatch = True
+        ws.row(row).height = 256*2
+
+        col = 1
+        for val in  item_dish['cols']:
+            ws.write(row, col, val['netto_one'] if 'netto_one' in val else '', style_val)
+            ws.write(row, col+1, val['netto_all'] if 'netto_all' in val else '' , style_val)
+            col += 2
+        
+        row += 1
+
+    ws.col(0).widht = 256 *35
+    wb.save(response)
+
+    return response
+
 
 
 def get_report_product_accounting(period):
