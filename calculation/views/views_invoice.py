@@ -56,27 +56,22 @@ class InvoiceView(ActionVew, UpdateView):
         return self.form_invalid(form, rows)
 
     def form_valid(self, form, rows):
-        self.object = form.save()
-        print('form is valid')
+        #self.object = form.save()
         rows.instance = self.object
-        rows.save()
-
         fs_not_save = rows.save(commit=False)
+        for obj in rows.deleted_objects:
+            obj.delete()
         for row in fs_not_save:
             if row.product_id:
                 row.save()
         messages.success(self.request,
-                         'Сохранение прошло успешно!')
-        return HttpResponseRedirect(self.get_success_url())
-    
+                         'Накладная сохранена!')
+        return super(self.__class__, self).form_valid(form)
+
     def form_invalid(self, form, rows):
-        print('form is invalid')
-        for key, val in form.errors.items():
-            messages.error(self.request, '{} {}'.format(key,val))
         for error in rows.errors:
-            messages.error(self.request,error)
-        return self.render_to_response(self.get_context_data(form=form,
-                                                             rows=rows))
+            messages.error(self.request, error)
+        return super(self.__class__, self).form_invalid(form)
 
     def get_success_url(self, **kwargs):
         inv = self.get_object()
