@@ -12,51 +12,60 @@
 
 
 {% block crumb %}
-  <ul id="ul-breadcrumb" class="breadcrumb">
-    <li id="li-1" class="breadcrumb-item"><a href="{{parent_href}}">{{parent_title}}</a></li>
-    <li id="li-2" class="breadcrumb-item active">{{title}}</li>
-  </ul>
+    <ul id="ul-breadcrumb" class="breadcrumb">
+        <li id="li-1" class="breadcrumb-item"><a href="{{ parent_href }}">{{ parent_title }}</a></li>
+        <li id="li-2" class="breadcrumb-item active">{{ title }}</li>
+    </ul>
 {% endblock crumb %}
-{% block content %}    
+{% block content %}
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header d-flex align-items-center">
-                  <h4>{{title}}</h4>
+                    <h4>{{ title }}</h4>
                 </div>
                 <div class="card-body">
                     {% block action_buttons %}
-                        <a class="btn btn-success append-item" href="{%url 'invoice-new' %}"> <i class="fa fa-plus" aria-hidden="true"></i></a>
+                        <a class="btn btn-success append-item" href="{% url 'invoice-new' %}"> <i class="fa fa-plus"
+                                                                                                  aria-hidden="true"></i></a>
                     {% endblock action_buttons %}
-                    <div class="line"></div>                  
-                    <table id="table_data" class="table_data table table-striped table-hover">
-                        <thead>
-                            <th style="width: 8%;">номер</th>
-                            <th style="width: 25%;">дата</th>
-                            <th style="width: 55%;">контрагент</th>
+                    <div class="line"></div>
+
+                    <table id="invoice" class="display" style="width:100%">
+                        <tfoot>
+                        <tr>
+                            <th>номер</th>
+                            <th>дата</th>
+                            <th>контрагент</th>
                             <th>сумма</th>
-                        </thead>
+                        </tr>
+                        </tfoot>
                     </table>
-                    <div id="table-scroll" class="table-scroll">
-                        <table class="table table-striped table-sm">
-                            <tbody>
-                                {% for item in object_list%}
-                                    <tr>
-                                        <td>
-                                            <a href="{% url 'invoice-update' pk=item.id%}">{{item.number}}</a>
-                                        </td>
-                                        <td><a href="/invoice/{{item.id}}/update">{{item.created_at|date:"d.m.Y"}}</a>
-                                        </td>
-                                        <td>{{item.contractor}}</td>
-                                        <td>{{item.total|floatformat:2}}</td>
-                                    </tr>
-                                {% endfor %}                    
-                            </tbody>
-                        </table>
-                    </div>
+
                 </div>
-                {%include 'includes/pagination.html' with url_list='invoices/consumption'%}
             </div>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#invoice').DataTable({
+                "language": ru_local,
+                ajax: {
+                    url: '/api/invoice_get/?format=datatables',
+                },
+                "columns": [
+                    {"title": "номер", "data": "number"},
+                    {"title": "дата", "data": "created_at"},
+                    {"title": "контрагент", "data": "contractor"},
+                    {"title": "сумма", "data": "total"},
+                ],
+                "createdRow": function (row, data, dataIndex) {
+                    row.childNodes[0].innerHTML = "<a href='" + data.abs_url + "'>" + data.number + "</a>";
+                    row.childNodes[1].innerHTML = "<a href='" + data.abs_url + "'>" + data.created_at + "</a>";
+                },
+
+            });
+        });
+    </script>
 {% endblock content %}

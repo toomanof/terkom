@@ -16,7 +16,6 @@ from .dish import Dish
 
 
 class Map(Model):
-
     name = CharField(verbose_name='название', max_length=250)
     source = CharField(verbose_name='источник', blank=True,
                        max_length=250, null=True)
@@ -37,7 +36,7 @@ class Map(Model):
                       blank=True, default=None, on_delete=PROTECT)
 
     def __str__(self):
-        return 'ТЕХНОЛОГИЧЕСКАЯ КАРТА:{}'.format(self.name)
+        return 'ТЕХНОЛОГИЧЕСКАЯ КАРТА:{}\n{}'.format(self.name)
 
     @property
     def netto(self):
@@ -47,7 +46,7 @@ class Map(Model):
     def brutto(self):
         return self.items.aggregate(sum=Sum('brutto'))['sum']
 
-    def save(self, *args, **kwargs):        
+    def save(self, *args, **kwargs):
         self.name = self.name.capitalize()
         super(Map, self).save(*args, **kwargs)
         if not self.dish.exists():
@@ -86,7 +85,6 @@ class Map(Model):
 
 
 class MapItems(Model):
-
     map_doc = ForeignKey(Map, verbose_name='документ', null=False, blank=True,
                          default=None, on_delete=CASCADE, related_name='items')
     position = PositiveIntegerField(verbose_name='№', editable=False,
@@ -113,7 +111,6 @@ class MapItems(Model):
 
 
 class MapItemsInline(admin.TabularInline):
-
     model = MapItems
     fields = (
         'position',

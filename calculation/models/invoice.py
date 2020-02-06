@@ -18,7 +18,6 @@ from calculation.constants import ARRIVAL, EXPENSE, TYPE_CHOICES
 
 
 class Invoice(Model):
-
     number = CharField(verbose_name='номер', blank=True, max_length=50,
                        help_text='Номер накладной')
     created_at = DateField(verbose_name='создано', db_index=True)
@@ -39,7 +38,7 @@ class Invoice(Model):
         super(Invoice, self).__init__(*args, **kwargs)
 
     def __str__(self):
-        return 'Накладная {} от {} {}'.format(self.number, self.created_at, TYPE_CHOICES[self.motion -1])
+        return 'Накладная {} от {} {}'.format(self.number, self.created_at, TYPE_CHOICES[self.motion - 1])
 
     def save(self, *args, **kwargs):
         super(Invoice, self).save(*args, **kwargs)
@@ -65,7 +64,6 @@ class Invoice(Model):
     def get_absolute_url(self):
         return reverse('invoice-update', kwargs={'pk': self.pk})
 
-
     class Meta:
         app_label = 'calculation'
         verbose_name = 'Накладные'
@@ -75,7 +73,6 @@ class Invoice(Model):
 
 
 class InvoiceItems(Model):
-
     invoce_doc = ForeignKey(Invoice, verbose_name='документ',
                             null=False, blank=True, default=None,
                             on_delete=CASCADE, related_name='items')
@@ -91,7 +88,7 @@ class InvoiceItems(Model):
 
     @property
     def summa(self):
-      return self.qty * self.price
+        return self.qty * self.price
 
     def save(self, *args, **kwargs):
         if not self.position:
@@ -100,8 +97,8 @@ class InvoiceItems(Model):
             self.position = position + 1
         super(InvoiceItems, self).save(*args, **kwargs)
 
-class InvoiceItemsInline(admin.TabularInline):
 
+class InvoiceItemsInline(admin.TabularInline):
     model = InvoiceItems
     fields = (
         'position',
@@ -115,16 +112,15 @@ class InvoiceItemsInline(admin.TabularInline):
 
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
-
     inlines = [
         InvoiceItemsInline,
     ]
 
     fieldsets = (
-                 ('', {'fields': (('number', 'created_at', 'motion'),
-                       ('contractor',), ('delivered', 'adopted'))}
-                  ),
-                 )
+        ('', {'fields': (('number', 'created_at', 'motion'),
+                         ('contractor',), ('delivered', 'adopted'))}
+         ),
+    )
 
     list_display = ('number', 'created_at', 'contractor',
                     'delivered', 'adopted', 'total')

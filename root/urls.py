@@ -21,20 +21,24 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
-urlpatterns = [  
-#	url('^', include('django.contrib.auth.urls')),
+urlpatterns = [
+    #	url('^', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
-#    url(r'^login/.*$', auth_views.login,{'template_name': 'myapp/login.html'}, name='login'),
+    path('api/', include('calculation_api.urls')),
+    #    url(r'^login/.*$', auth_views.login,{'template_name': 'myapp/login.html'}, name='login'),
     url(r'^', include('calculation.urls')),
+
 ]
-#urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 urlpatterns += [url(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
                 url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT})]
-                
+
 if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()
-    import debug_toolbar    
+    import debug_toolbar
+
     urlpatterns += [
-                    url(r'^__debug__/', include(debug_toolbar.urls))]
+        url(r'^__debug__/', include(debug_toolbar.urls))]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

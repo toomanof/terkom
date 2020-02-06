@@ -6,13 +6,13 @@ from django.db.models import CharField
 
 class Unit(Model):
     short_name = CharField(max_length=50,
-                     verbose_name='краткое название')
+                           verbose_name='краткое название')
     full_name = CharField(max_length=250,
-                     verbose_name='полное название')
+                          verbose_name='полное название')
     code = SlugField(max_length=4, verbose_name='код', unique=True)
 
     def __str__(self):
-    	return self.short_name
+        return self.short_name
 
     class Meta:
         db_table = 'appcalc_units'
@@ -20,6 +20,7 @@ class Unit(Model):
         verbose_name = 'Единицы измерения'
         verbose_name_plural = 'Единицы измерения'
         ordering = ['code']
+
 
 @admin.register(Unit)
 class UnitAdmin(admin.ModelAdmin):

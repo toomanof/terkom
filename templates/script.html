@@ -1,5 +1,6 @@
 {% load static %}
-<script type="text/javascript" src="{% static 'node_modules/jquery/dist/jquery.min.js' %}"></script>
+{#<script type="text/javascript" src="{% static 'node_modules/jquery/dist/jquery.min.js' %}"></script>#}
+<script type="text/javascript" src="{% static 'DataTables/jQuery-3.3.1/jquery-3.3.1.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/tether.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/moment.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'node_modules/bootstrap/dist/js/bootstrap.min.js' %}"></script>
@@ -7,3 +8,66 @@
 <script type="text/javascript" src="{% static 'fullcalendar-3.9.0/fullcalendar.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'fullcalendar-3.9.0/locale/ru.js' %}"></script>
 <script type="text/javascript" src="{% static 'node_modules/jquery-validation/dist/jquery.validate.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'DataTables/datatables.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'DataTables/dataTables.bootstrap4.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'select2/js/select2.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'node_modules/sweetalert2/dist/sweetalert2.all.min.js' %}"></script>
+
+<!-- sorting any-number in DataTables, column type "number" -->
+<script>
+    function _anyNumberSort(a, b, high) {
+
+        var reg = /[+-]?((\d+(\.\d*)?)|\.\d+)([eE][+-]?[0-9]+)?/;
+        a = a.replace(',', '.').replace(/ /g, '').match(reg);
+        a = a !== null ? parseFloat(a[0]) : high;
+        b = b.replace(',', '.').replace(/ /g, '').match(reg);
+        b = b !== null ? parseFloat(b[0]) : high;
+
+        return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+    };
+
+    {#function _stringSort(a,b,heigh)#}
+
+    jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+        "number-asc": function (a, b) {
+            return _anyNumberSort(a, b, Number.POSITIVE_INFINITY);
+        },
+        "number-desc": function (a, b) {
+            return _anyNumberSort(a, b, Number.NEGATIVE_INFINITY) * -1;
+        }
+    });
+</script>
+
+
+<!-- ru local for DataTables -->
+<script>
+    var ru_local = {
+        "processing": "Подождите...",
+        "search": "Поиск:",
+        "lengthMenu": "Показать _MENU_ записей",
+        "info": "Записи с _START_ до _END_ из _TOTAL_ записей",
+        "infoEmpty": "Записи с 0 до 0 из 0 записей",
+        "infoFiltered": "(отфильтровано из _MAX_ записей)",
+        "infoPostFix": "",
+        "loadingRecords": "Загрузка записей...",
+        "zeroRecords": "Записи отсутствуют.",
+        "emptyTable": "В таблице отсутствуют данные",
+        "paginate": {
+            "first": "Первая",
+            "previous": "Предыдущая",
+            "next": "Следующая",
+            "last": "Последняя"
+        },
+        "aria": {
+            "sortAscending": ": активировать для сортировки столбца по возрастанию",
+            "sortDescending": ": активировать для сортировки столбца по убыванию"
+        },
+        "select": {
+            "rows": {
+                "_": "Выбрано записей: %d",
+                "0": "Кликните по записи для выбора",
+                "1": "Выбрана одна запись"
+            }
+        }
+    }
+</script>
