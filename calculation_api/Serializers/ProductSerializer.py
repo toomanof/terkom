@@ -14,7 +14,6 @@ class ProductSerializerForSelect(serializers.ModelSerializer):
 
 
 class ProductSerializerGet(serializers.ModelSerializer):
-    # unit = serializers.StringRelatedField(many=False)
     unit = serializers.SerializerMethodField('get_unit')
     dish = serializers.SerializerMethodField('get_dish')
     abs_url = serializers.SerializerMethodField('get_absolute_url')

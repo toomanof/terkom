@@ -24,17 +24,38 @@ async function modal_form_show(modal_data, title, modal_type) {
     Swal.fire({
         title: title,
         width: 480,
-        html: '<div class = "form-group">' +
-            '<div class="form-row"><label style="color:rgb(0,0,0); margin: 0px 0px 5px 3px;">Название:</label></div>' +
-            '<div class="form-row"><input name="input-name" type="text" class="form-control form-control-sm" style="border-color:#AAAAAA;"></div>' +
-            '<div class="form-row"><div name="name-error-msg" style="display:inline-block;font-size:12px;color:rgb(255,0,0);margin-bottom:5px;margin-left:5px;"></div></div>' +
-            '<div class="form-row"><label style="color:rgb(0,0,0); margin: 0px 0px 5px 3px;">Ед. изм:</label></div>' +
-            '<div class="form-row" style="margin-bottom:5px;"><select class="select-unit js-example-basic-single"></select></div>' +
-            '<div class="form-row"><label style="color:rgb(0,0,0); margin: 0px 0px 5px 3px;">Выход порции:</label></div>' +
-            '<div class="form-row"><input name="out-weight" class="form-control form-control-sm" type="number" step="any" style="border-color:#AAAAAA;"/></div>' +
-            '<div class="form-row"><div name="weight-error-msg" style="display:inline-block;font-size:12px;color:rgb(255,0,0);margin-bottom:5px;margin-left:5px;"></div></div>' +
-            '<div class="form-row"><label style="color:rgb(0,0,0); margin: 0px 0px 5px 3px;">Технологическая карта:</label></div>' +
-            '<div class="form-row" style="margin-bottom:5px;"><select class="select-tech-map js-example-basic-single"></select></div>' +
+        html:
+            '<div class = "form-group">' +
+            '   <div class="form-row">' +
+            '       <label style="color:rgb(0,0,0); margin: 0px 0px 5px 3px;">Название:</label>' +
+            '   </div>' +
+            '   <div class="form-row">' +
+            '       <input name="input-name" type="text" class="form-control form-control-sm" style="border-color:#AAAAAA;">' +
+            '   </div>' +
+            '   <div class="form-row">' +
+            '       <div name="name-error-msg" style="display:inline-block;font-size:12px;color:rgb(255,0,0);margin-bottom:5px;margin-left:5px;"></div>' +
+            '   </div>' +
+            '   <div class="form-row">' +
+            '       <label style="color:rgb(0,0,0); margin: 0px 0px 5px 3px;">Ед. изм:</label>' +
+            '   </div>' +
+            '   <div class="form-row" style="margin-bottom:5px;">' +
+            '       <select class="select-unit js-example-basic-single"></select>' +
+            '   </div>' +
+            '   <div class="form-row">' +
+            '       <label style="color:rgb(0,0,0); margin: 0px 0px 5px 3px;">Выход порции:</label>' +
+            '   </div>' +
+            '   <div class="form-row">' +
+            '       <input name="out-weight" class="form-control form-control-sm" type="number" step="any" style="border-color:#AAAAAA;"/>' +
+            '   </div>' +
+            '   <div class="form-row">' +
+            '       <div name="weight-error-msg" style="display:inline-block;font-size:12px;color:rgb(255,0,0);margin-bottom:5px;margin-left:5px;"></div>' +
+            '   </div>' +
+            '   <div class="form-row">' +
+            '       <label style="color:rgb(0,0,0); margin: 0px 0px 5px 3px;">Технологическая карта:</label>' +
+            '   </div>' +
+            '   <div class="form-row" style="margin-bottom:5px;">' +
+            '       <select class="select-tech-map js-example-basic-single"></select>' +
+            '   </div>' +
             '</div>',
         confirmButtonText: 'Подтвердить',
         cancelButtonText: 'Отменить',
@@ -64,7 +85,6 @@ async function modal_form_show(modal_data, title, modal_type) {
                     icon: "success"
                 });
 
-                console.log(res.data)
                 if (modal_type == "create")
                     dtable.row.add(res.data).draw();
             } else if (res.status == "failed" && res.data.indexOf("UNIQUE") != -1) {
@@ -103,6 +123,7 @@ async function modal_form_show(modal_data, title, modal_type) {
     });
 }
 
+//Метод вызываемый модальным окном для создания нового 'dish'
 async function modal_create_is_confirm(ajax_data) {
     let resp = await fetch('/api/dish/', {
         credentials: 'same-origin', // 'include', default: 'omit'
@@ -121,6 +142,7 @@ async function modal_create_is_confirm(ajax_data) {
     }
 }
 
+//Метод вызываемый модальным окном для редактирования 'dish'
 async function modal_edit_is_confirm(modal_data, ajax_data) {
     let resp = await fetch('/api/dish/' + modal_data.id, {
         credentials: 'same-origin', // 'include', default: 'omit'
@@ -139,6 +161,8 @@ async function modal_edit_is_confirm(modal_data, ajax_data) {
     }
 }
 
+
+//Заполнение формы модального окна при редактировании
 function edit_modal_on_open(modal_data) {
     let option_select_unit = new Option(modal_data.unit.name, modal_data.unit.id, false, false);
     let option_select_tech_map = new Option(modal_data.tech_map.name, modal_data.tech_map.id, false, false);

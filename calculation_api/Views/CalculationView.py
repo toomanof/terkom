@@ -9,8 +9,8 @@ from calculation.models.calculation import Calculation
 
 
 class CalculationViewSet(APIView):
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    # authentication_classes = (TokenAuthentication,)
+    # permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         queryset = Calculation.objects.all()

@@ -22,17 +22,38 @@ $(document).ready(function () {
 async function modal_form_show(modal_data, title, modal_type) {
     Swal.fire({
         title: title,
-        html: '<div class = "form-group">' +
-            '<div class="form-row"><label style="color:rgb(0,0,0); margin: 0px 0px 5px 3px;">Название:</label></div>' +
-            '<div class="form-row"><input name="input_name" type="text" class="form-control form-control-sm" style="border-color:#AAAAAA;"></div>' +
-            '<div class="form-row"><div name="name-error-msg" style="display:inline-block;font-size:12px;color:rgb(255,0,0);margin-bottom:5px;margin-left:5px;"></div></div>' +
-            '<div class="form-row"><label style="color:rgb(0,0,0); margin: 0px 0px 5px 3px;">Ед. изм:</label></div>' +
-            '<div class="form-row" style="margin-bottom:5px;"><select class="select-unit js-example-basic-single"></select></div>' +
-            '<div class="form-row"><label style="color:rgb(0,0,0); margin: 0px 0px 5px 3px;">Продукт:</label></div>' +
-            '<div class="form-row" style="margin-bottom:5px;"><select class="select-dish js-example-basic-single"></select></div>' +
-            '<div class="form-row"><label style="color:rgb(0,0,0); margin: 0px 0px 5px 3px;">Вес, кг:</label></div>' +
-            '<div class="form-row"><input name="weight" class="form-control form-control-sm" type="number" step="any" style="border-color:#AAAAAA;"/></div>' +
-            '<div class="form-row"><div name="weight-error-msg" style="display:inline-block;font-size:12px;color:rgb(255,0,0);margin-bottom:5px;margin-left:5px;"></div></div>' +
+        html:
+            '<div class = "form-group">' +
+            '   <div class="form-row">' +
+            '       <label style="color:rgb(0,0,0); margin: 0px 0px 5px 3px;">Название:</label>' +
+            '   </div>' +
+            '   <div class="form-row">' +
+            '       <input name="input_name" type="text" class="form-control form-control-sm" style="border-color:#AAAAAA;">' +
+            '   </div>' +
+            '   <div class="form-row">' +
+            '       <div name="name-error-msg" style="display:inline-block;font-size:12px;color:rgb(255,0,0);margin-bottom:5px;margin-left:5px;"></div>' +
+            '   </div>' +
+            '   <div class="form-row">' +
+            '       <label style="color:rgb(0,0,0); margin: 0px 0px 5px 3px;">Ед. изм:</label>' +
+            '   </div>' +
+            '   <div class="form-row" style="margin-bottom:5px;">' +
+            '       <select class="select-unit js-example-basic-single"></select>' +
+            '   </div>' +
+            '   <div class="form-row">' +
+            '       <label style="color:rgb(0,0,0); margin: 0px 0px 5px 3px;">Продукт:</label>' +
+            '   </div>' +
+            '   <div class="form-row" style="margin-bottom:5px;">' +
+            '       <select class="select-dish js-example-basic-single"></select>' +
+            '   </div>' +
+            '   <div class="form-row">' +
+            '       <label style="color:rgb(0,0,0); margin: 0px 0px 5px 3px;">Вес, кг:</label>' +
+            '   </div>' +
+            '   <div class="form-row">' +
+            '       <input name="weight" class="form-control form-control-sm" type="number" step="any" style="border-color:#AAAAAA;"/>' +
+            '   </div>' +
+            '   <div class="form-row">' +
+            '       <div name="weight-error-msg" style="display:inline-block;font-size:12px;color:rgb(255,0,0);margin-bottom:5px;margin-left:5px;"></div>' +
+            '   </div>' +
             '</div>',
         confirmButtonText: 'Подтвердить',
         cancelButtonText: 'Отменить',

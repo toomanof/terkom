@@ -37,8 +37,6 @@ class MapFullSerializerGet(serializers.ModelSerializer):
 
 
 class MapSerializerGet(serializers.ModelSerializer):
-    # approved = serializers.StringRelatedField(many=False)
-    # agreed = serializers.StringRelatedField(many=False)
     unit = serializers.StringRelatedField(many=False)
 
     class Meta:

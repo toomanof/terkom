@@ -72,9 +72,8 @@ class MapViewSet(APIView):
         if serializer.is_valid(raise_exception=True):
             saved_map_obj = serializer.save()
             for item in request.data.get('items'):
-                print(item.get('id'))
                 item = json_modify(item, 'map_doc', saved_map_obj.id)
-
+                # если в item, id имеет значение -1 значит его нужно создать, а если больше -1 то это его настоящий id в модельи и его можно редактировать
                 if int(item.get('id')) > -1:
                     item_instance = get_object_or_404(MapItems.objects.all(), pk=int(item.get('id')))
                     item_serializer = MapItemsSerializer(instance=item_instance, data=item, partial=True)
@@ -84,7 +83,7 @@ class MapViewSet(APIView):
                     item_serializer = MapItemsSerializer(data=item)
                     if item_serializer.is_valid(raise_exception=True):
                         item_serializer.save()
-        return Response({"status": "done", "data": 'serializer.data'})
+        return Response({"status": "done", "data": serializer.data})
 
     def delete(self, request, id):
         # Get object with this pk

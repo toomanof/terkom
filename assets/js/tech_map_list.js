@@ -1,3 +1,5 @@
+var index_row_in_ingTable = 1;
+
 $(document).ready(function () {
     $('#example').DataTable({
         "language": ru_local,
@@ -30,18 +32,20 @@ async function modal_form_show(modal_data, title, modal_type) {
             '   <div class="col-5">' +
             '       <label class="form-row" style="color:rgb(0,0,0);">Утверждено:</label>' +
             '       <div class="form-row"><select class="select-map-approved js-example-basic-single" ></select></div>' +
+            '       <div class="form-row" name="approved-error-msg" style="text-align: left;font-size:12px;color:rgb(255,0,0);margin-bottom:5px;margin-left:5px;"></div>' +
             '   </div>' +
             '   <div class="col-2"></div>' +
             '   <div class="col-5">' +
             '       <label class="form-row" style="color:rgb(0,0,0);">Согласовано:</label>' +
             '       <div class="form-row"><select class="select-map-agreed js-example-basic-single"></select></div>' +
+            '       <div class="form-row" name="agreed-error-msg" style="text-align: left; font-size:12px;color:rgb(255,0,0);margin-bottom:5px;margin-left:5px;"></div>' +
             '   </div>' +
             '</div>' +
             '<div class="form-row"  style="margin-bottom: 15px;">' +
             '   <div class="col-5">' +
             '       <label class="form-row" style="color:rgb(0,0,0);">Название:</label>' +
             '       <input name="input-name" type="text" class="form-row form-control form-control-sm" style="border-color:#AAAAAA;">' +
-            '       <div name="name-error-msg" style="float:left;display:inline-block;font-size:12px;color:rgb(255,0,0);margin-bottom:5px;margin-left:5px;"></div>' +
+            '       <div class="form-row" name="name-error-msg" style="text-align: left; font-size:12px;color:rgb(255,0,0);margin-bottom:5px;margin-left:5px;"></div>' +
             '   </div>' +
             '   <div class="col-2"></div>' +
             '   <div class="col-5">' +
@@ -52,7 +56,7 @@ async function modal_form_show(modal_data, title, modal_type) {
             '<div class="form-row"><label style="color:rgb(0,0,0);">Технология приготовления:</label></div>' +
             '<div class="form-row" style="margin-bottom: 15px;">' +
             '   <textarea name="technology" rows="5" class="form-control" required="" id="id_technology"></textarea>' +
-            '   <div name="technology-error-msg" style="display:inline-block;font-size:12px;color:rgb(255,0,0);margin-bottom:5px;margin-left:5px;"></div>' +
+            '   <div class="form-row" name="technology-error-msg" style="text-align: left;font-size:12px;color:rgb(255,0,0);margin-bottom:5px;margin-left:5px;"></div>' +
             '</div>' +
             '<div class="form-row" style="text-align:left;">' +
             '<table id="table_ingredients" class="table table-striped table-sm" style="width:100%">' +
@@ -101,7 +105,8 @@ async function modal_form_show(modal_data, title, modal_type) {
                     batch_output: $('input[name="out-weight"]').val(),
                     unit: $('.select-unit').val(),
                 },
-                items: []
+                items: [],
+                del_items: [],
             };
 
             let elements_position = document.getElementsByName("position");
@@ -120,7 +125,8 @@ async function modal_form_show(modal_data, title, modal_type) {
                 });
             }
 
-            console.log(ajax_data);
+            $('div[name="agreed-error-msg"]').text('');
+            $('div[name="approved-error-msg"]').text('');
             $('div[name="name-error-msg"]').text('');
             $('div[name="technology-error-msg"]').text('');
             $('div[name="product-error-msg"]').text('');
@@ -131,18 +137,27 @@ async function modal_form_show(modal_data, title, modal_type) {
                 res = await modal_edit_is_confirm(modal_data, ajax_data);
 
             if (res.hasOwnProperty('name')) {
-                $('div[name="name-error-msg"]').text('Это поле не может быть пустым')
+                $('div[name="name-error-msg"]').text('Это поле не может быть пустым');
+            }
+            if (res.hasOwnProperty('agreed')) {
+                $('div[name="agreed-error-msg"]').text('Это поле не может быть пустым');
+            }
+            if (res.hasOwnProperty('approved')) {
+                $('div[name="approved-error-msg"]').text('Это поле не может быть пустым');
             }
             if (res.hasOwnProperty('technology')) {
-                $('div[name="technology-error-msg"]').text('Это поле не может быть пустым')
+                $('div[name="technology-error-msg"]').text('Это поле не может быть пустым');
             }
             if (res.hasOwnProperty('product')) {
-                $('div[name="product-error-msg"]').text('Это поле не может быть пустым')
+                $('div[name="product-error-msg"]').text('Это поле не может быть пустым');
             }
 
+            console.log(res);
             return false;
         },
         onOpen: async function () {
+            index_row_in_ingTable = 1;
+
             $('.select-unit').select2({
                 width: '100%',
                 ajax: {
@@ -177,44 +192,53 @@ async function modal_form_show(modal_data, title, modal_type) {
                 $('.form-content').css('display', 'block');
 
             }
-
         },
     });
 }
 
 
 function delete_row(row) {
-    $('tbody', 'table#table_ingredients')[0].removeChild(row);
+    row_index = row.getAttribute('value');
+    row_body = row.innerHTML;
+    index_row_in_ingTable -= 1;
 
+    row.innerHTML = '<td onclick="cancel_del_row(row_body,row_index)"  colspan="5" style="text-align: center; font-size: small;">Отменить</td>';
     let elements_position = document.getElementsByName("position");
     for (let i = 0; i < elements_position.length; i++) {
         elements_position[i].innerText = i + 1;
     }
 }
 
+function cancel_del_row(row_body, row_index) {
+    $('tr[value="'+row_index+'"]').html(row_body);
+}
 
 function append_row(row_data) {
-    $('tbody', 'table#table_ingredients').append(
-        '<tr>' +
-        '   <td name="position" style="width: 5%;"><input name="item-id" type="hidden" value="' + (row_data ? row_data.id : -1) + '">' + ($('tbody', 'table#table_ingredients')[0].childNodes.length + 1) + '</td>' +
-        '   <td style="width: 30%;"><select name="select-product" class="select-product js-example-basic-single"></select></td>' +
+    index_row_in_ingTable += 1;
+    let index = ($('tbody', 'table#table_ingredients')[0].childNodes.length + 1);
+    let row_index = document.getElementsByName('row-index').length + 1;
+    row = '<tr name="row-index" value="' + index_row_in_ingTable + '">' +
+        '   <td style="width: 5%;"><input name="item-id" type="hidden" value="' + (row_data ? row_data.id : -1) + '"><div name="position">' + index + '</div></td>' +
+        '   <td style="width: 30%;"><select name="select-product" class="select-product' + index + ' js-example-basic-single"></select></td>' +
         '   <td style="width: 30%;"><input type="number" name="item-brutto" value="' + (row_data ? row_data.brutto : 0) + '" class="form-control form-control-sm mr-3" required="" data-msg="Укажите брутто" step="0.001"></td>' +
         '   <td style="width: 30%;"><input type="number" name="item-netto" value="' + (row_data ? row_data.netto : 0) + '" class="form-control form-control-sm mr-3" required="" data-msg="Укажите нетто" step="0.001"></td>' +
         '   <td style="width: 5%;"><button type="button" class="btn btn-danger" onclick="delete_row(this.parentElement.parentElement)">X</button></td>' +
-        '</tr>');
+        '</tr>'
+    $('tbody', 'table#table_ingredients').append(row);
 
+    // $('tbody', 'table#table_ingredients').append('<tr><td  colspan="5" style="text-align: center; font-size: small;">Отменить</td></tr>');
 
-    $('.select-product').select2({
+    let select2_instance = $('.select-product' + index).select2({
         width: '100%',
         ajax: {
-            url: '/api/select2/product/',
+            url: '/api/select2/dish/',
             dataType: 'json'
         }
     });
 
     if (row_data) {
-        let option_product = new Option(row_data.product.text, row_data.product.id, false, false);
-        $('.select-product').append(option_product).trigger('change');
+        let option_product = new Option(row_data.product.text, row_data.product.id, false, true);
+        select2_instance.append(option_product).trigger('change');
     }
 }
 
