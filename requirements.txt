@@ -16,7 +16,7 @@ pyflakes==1.6.0
 PyPDF2==1.26.0
 python-dateutil==2.7.3
 pytz==2018.4
-reportlab==3.4.0
+reportlab==3.5.55
 six==1.11.0
 sqlparse==0.2.4
 uWSGI==2.0.17.1
